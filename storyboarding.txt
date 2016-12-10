@@ -1,0 +1,47 @@
+
+
+APP SCREEN
+
+	ON TAB
+
+		Launch Screen ( Discover page )
+			visibility
+
+		Saved Screen ( Saved by user )
+			loyalty
+
+		Badges Sceen ( Badges earned, badges locked)
+			pages
+			onClick => modal of about badge
+
+		Share Wall Screen ( Shared experiences by users )
+			forum
+
+		Account Screen ( Login, Logout, change profile pic, background pic, bio, and metrics )
+			settings
+
+	OFF TAB
+
+		Users screens ( Other users, chained from comments, basic views of name background pic profile pic bio recent events, metrics)
+
+		Content screen ( about event )
+
+			pic, desc, location (map view), contact, time, date
+
+			comments (lazy load)
+
+ACTION BAR
+
+	LEFT ICON
+
+		?
+
+	RIGHT ICON
+
+		( stage 2 of app - more in depth user communication )
+
+
+
+BRONZE IDEA
+
+	log hours bi directional w/ orgs
