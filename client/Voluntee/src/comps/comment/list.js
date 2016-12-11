@@ -4,7 +4,7 @@ import {Actions} from 'react-native-router-flux'
 import {Button,Avatar,ListItem} from 'react-native-material-ui'
 
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
-import {getShareWallPostsByDescDateAndCount} from '../../general/firebase'
+import {blockUserAction} from '../../general/userActions'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
 import {style} from './style'
 
@@ -54,9 +54,9 @@ const UserDescCompStyle = {
 	}
 }
 
-const buttons = ['report comment', 'hide comment', 'block user', 'dismiss']
+const buttons = ['message user', 'report comment', 'hide comment', 'block user', 'dismiss']
 
-const onCommentButtonPress = props => {
+const onCommentButtonPress = async props => {
 
 	// @props
 	// index
@@ -68,21 +68,33 @@ const onCommentButtonPress = props => {
 	switch(index) {
 		case 0:
 			if(__DEV__) {
-				console.log('report the comment')
+				console.log('send user a message')
 				console.log(props.comment)
 			}
 			break;
 		case 1:
 			if(__DEV__) {
-				console.log('hide the comment')
+				console.log('report the comment')
 				console.log(props.comment)
 			}
 			break;
 		case 2:
 			if(__DEV__) {
+				console.log('hide the comment')
+				console.log(props.comment)
+			}
+			break;
+		case 3:
+			if(__DEV__) {
 				console.log('block the user')
 				console.log(props.comment)
 			}
+			const blockData = {
+				userEmail: Actions.user.email,
+				userBlocked: props.comment.userEmail,
+				userBlockedDisplayName: props.comment.userDisplayName
+			}
+			blockUserAction(blockData)
 			break;
 		default:
 			// do nothing
@@ -99,16 +111,12 @@ const showCommentOptions = comment => {
 	// if user is signed in show
 	// options for comment, report/etc
 	// if not tell user they need to sign in
-	if(__DEV__) {
-		console.log(comment)
-	}
-	// if user is signed in show options
 	if(Actions.user) {
 		Actions.ActionSheet({
 	        onComplete: index => onCommentButtonPress({index:index, comment:comment}),
 	        buttons: buttons,
 	        title: 'comment options',
-	        cancelIndex:3
+	        cancelIndex:4
 	    })
 	}
 	// otherwise tell them to 

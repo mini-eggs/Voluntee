@@ -28,7 +28,6 @@ const inline = {
 class FormComp extends React.Component{
 	constructor(props){
 		super(props)
-		console.log(props)
 		this.state = {
 			comment:null,
 			loading:false,
@@ -80,7 +79,12 @@ class FormComp extends React.Component{
 					})
 			})
 			.catch( err => {
-				this.error('No comment has been entered')
+				this.setState({loading:false})
+				Actions.modal({
+					header: 'Error',
+					message: 'No comment has been entered',
+					onComplete: false
+				})
 			})
 		})
 	}

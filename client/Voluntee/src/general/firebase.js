@@ -31,6 +31,48 @@ const fixArrWithKey = props => props.arr.map( arr => {
 	return newArr
 })
 
+
+// internal
+const checkBlockStatus = async props => {
+	return new Promise( async (resolve, reject) => {
+		const user = firebase.database().ref('blocked').orderByChild('userEmail').equalTo(props.userEmail)
+		user.once('value', snap => {
+			const data = snap.val()
+			if(data) {
+				ObjToArr({obj:data}).forEach(item => {
+					if(item[1].userBlocked === props.userBlocked) reject()
+				})
+			}
+			resolve()
+		})
+	})
+}
+
+// internal
+const doBlockUser = async props => {
+	return new Promise( async (resolve, reject) => {
+		const userBlockedKey = firebase.database().ref().child('blocked').push().key
+		const updates = {}
+	  	updates[`/blocked/${userBlockedKey}`] = props
+	  	const row = firebase.database().ref().update(updates)
+	  	resolve()
+	})
+}
+
+const blockUser = async props => {
+	// @props
+	// userEmail
+	// userBlocked
+	// @
+	return new Promise( async (resolve, reject) => {
+		checkBlockStatus(props)
+			.then(data => doBlockUser(props))
+			.then(data => resolve())
+			.catch(err => reject())
+	})
+}
+export {blockUser}
+
 // pass in a key
 // and return all values
 // for that key

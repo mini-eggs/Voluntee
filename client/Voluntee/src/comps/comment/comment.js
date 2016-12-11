@@ -10,6 +10,7 @@ import CommentList from './list'
 import CommentCreate from './create'
 
 class CommentComp extends React.Component {
+
 	constructor(props){
 		super(props)
 		this.state = {
@@ -18,13 +19,30 @@ class CommentComp extends React.Component {
 			comments:[]
 		}
 	}
+
 	componentDidMount(){
 		this.componentWillLoadComments()
 	}
+
 	componentWillLoadComments(){
 		getCommentsFromKey({key:this.state.key})
 			.then( data => this.setState({comments:data}))
 	}
+
+	// this will be hit
+	// if users are tapping 
+	// very fast, reload the
+	// comments so no old comments 
+	// are present
+    componentWillReceiveProps(props) {
+    	const newState = {
+			ref:props.data.ref,
+			key:props.data.key,
+			comments:[]
+		}
+        this.setState(newState, this.componentWillLoadComments)
+    }
+
   	render() {
     	return (
     		<View>

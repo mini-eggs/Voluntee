@@ -89,12 +89,18 @@ const inline = {
 }
 
 class ShareSingle extends React.Component {
+
 	constructor(props){
 		super(props)
 		this.state = {
 			item:props.post
 		}
 	}
+
+    componentWillReceiveProps(props) {
+        this.setState({item:props.post})
+    }
+
   	render() {
     	return (
     		<Base>

@@ -54,6 +54,15 @@ export default class extends React.Component{
 		Actions.changeModal = props => this.changeModal(props)
 		Actions.showModal = event => this.showModal(event)
 		Actions.hideModal = event => this.hideModal(event)
+		Actions.modal = async props => this.abstractModel(props)
+	}
+
+	// abstract the showModal
+	// and changeModal away
+	// I'm writing too much code
+	async abstractModel(props) {
+		const status = this.changeModal(props)
+		this.showModal(status)
 	}
 
 	// this will be used in
@@ -68,13 +77,17 @@ export default class extends React.Component{
 	// change 
 	// header, body, and onComplete
 	// of modal globally
-	changeModal(props) {
-		this.setState(props)
+	async changeModal(props) {
+		return new Promise( async (resolve, reject) => {
+			this.setState(props, resolve) 
+		})
 	}
 
 	// call to show modal
-	showModal(event) { 
-		this.setState({modalVisible:true}) 
+	async showModal(event) {
+		return new Promise( async (resolve, reject) => {
+			this.setState({modalVisible:true}, resolve) 
+		})
 	}
 
 	// call to hide modal
