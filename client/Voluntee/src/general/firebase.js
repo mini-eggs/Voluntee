@@ -31,6 +31,19 @@ const fixArrWithKey = props => props.arr.map( arr => {
 	return newArr
 })
 
+// removeCommentByKey
+// delete comment 
+const removeCommentByKey = async props => {
+	// @props
+	// key
+	// @
+	return new Promise( async (resolve, reject) => {
+		firebase.database().ref('comments').child(props.key).remove(err => {
+			err ? reject() : resolve()
+		})
+	})
+}
+export {removeCommentByKey}
 
 // internal
 const checkBlockStatus = async props => {
@@ -56,6 +69,24 @@ const doBlockUser = async props => {
 	  	updates[`/blocked/${userBlockedKey}`] = props
 	  	const row = firebase.database().ref().update(updates)
 	  	resolve()
+	})
+}
+
+// internal
+const getBlockedUsersByUserEmail = async props => {
+	return new Promise( async (resolve, reject) => {
+		const blockedRows = firebase.database().ref('blocked').orderByChild('userEmail').equalTo(props.userEmail)
+		blockedRows.once('value', snap => {
+			const data = snap.val()
+			if(!data) resolve([])
+			else {
+				resolve(
+					ObjToArr({obj:data}).map( row => {
+						return row[1].userBlocked
+					})
+				)
+			}
+		})
 	})
 }
 
@@ -333,62 +364,94 @@ export {saveEvent}
 
 // get all comments with a specific key
 // from firebase
-const getCommentsFromKey = props => new Promise((resolve,reject) => {
-	firebase.database().ref('comments').orderByChild('key').equalTo(props.key).once("value", snap => {
-		// there is no data with that key
-		// return an empty list
-		if(!snap.val()) {
-			resolve([])
-			return 
+const getCommentsFromKey = async props => {
+
+	return new Promise( async (resolve,reject) => {
+
+		// check if the user has blocked any of these comments
+		let blockedUsers = []
+		if(Actions.user) {
+			blockedUsers = await getBlockedUsersByUserEmail({userEmail:Actions.user.email})
 		}
-		// there are comments with that key
-		// firebase is janky, fix the data
-		resolve(fixArrWithKey({arr:ObjToArr({obj:snap.val()})}).reverse())
+
+		firebase.database().ref('comments').orderByChild('key').equalTo(props.key).once("value", snap => {
+			// there is no data with that key
+			// return an empty list
+			if(!snap.val()) {
+				resolve([])
+				return 
+			}
+			// there are comments with that key
+			// firebase is janky, fix the data
+			let comments = fixArrWithKey({arr:ObjToArr({obj:snap.val()})}).reverse()
+			let commentsFixed = []
+			comments.forEach( comment => {
+				if(!blockedUsers.includes(comment.userEmail)) {
+					commentsFixed.push(comment)
+				}
+			})
+			resolve(commentsFixed)
+		})
 	})
-})
+}
 export {getCommentsFromKey}
 
 // get share wall posts via firebase
 // sort by desc date
 // also return if there are more pages available
 // for pagination reasons
-const getShareWallPostsByDescDateAndCount = props => new Promise((resolve,reject) => {
-	// obtain firebase ref
-	let posts = firebase.database().ref("posts")
-	// check if we have a previous date to begin from 
-	// this is most likely the cause of pagination
-	if(props.descDate) posts = posts.orderByChild('descDate').limitToFirst(props.count + 1).startAt(props.descDate)
-	// no start location specified
-	// start from most recent share wall post
-	else posts = posts.orderByChild('descDate').limitToFirst(props.count)
-	// get share wall data fromm firebase
-	// depening on our props so far (desc start date)
-	posts.once('value', snap => {
-		let items = snap.val()
-		// fix firebase object
-		items = ObjToArr({obj:items})
-		// reverse because we're sorting by desc
-		items = items.reverse()
-		// only return the data
-		// we care about
-		// only the key is stored in the first object
-		items = items.map(item => {
-			item[1].key = item[0]
-			return item
-		})
-		// erase the piece of data used for pagination
-		// in determining if there are more pages
-		if(props.descDate) items.shift()
-		let lastDate = items[items.length - 1][1].descDate
-		// make sure if there are/is not more pages and return data
-		firebase.database().ref("posts").orderByChild('descDate').limitToFirst(props.count).startAt(lastDate).once("value", snap => {
-			// fixing the object once more
-			// yay firebase
-			let more = Object.keys(snap.val()).length > 1
-			resolve({more:more,items:items})
+const getShareWallPostsByDescDateAndCount = async props => {
+	return new Promise( async (resolve,reject) => {
+		// get all user that the current user has blocked
+		// if there is a current user
+		let blockedUsers = []
+		if(Actions.user) {
+			blockedUsers = await getBlockedUsersByUserEmail({userEmail:Actions.user.email})
+		}
+		// obtain firebase ref
+		let posts = firebase.database().ref("posts")
+		// check if we have a previous date to begin from 
+		// this is most likely the cause of pagination
+		if(props.descDate) posts = posts.orderByChild('descDate').limitToFirst(props.count + 1).startAt(props.descDate)
+		// no start location specified
+		// start from most recent share wall post
+		else posts = posts.orderByChild('descDate').limitToFirst(props.count)
+		// get share wall data fromm firebase
+		// depening on our props so far (desc start date)
+		posts.once('value', snap => {
+			let items = snap.val()
+			// fix firebase object
+			items = ObjToArr({obj:items})
+			// reverse because we're sorting by desc
+			items = items.reverse()
+			// only return the data
+			// we care about
+			// only the key is stored in the first object
+			items = items.map(item => {
+				item[1].key = item[0]
+				return item
+			})
+			// erase the piece of data used for pagination
+			// in determining if there are more pages
+			if(props.descDate) items.shift()
+			let lastDate = items[items.length - 1][1].descDate
+			// remove the posts created
+			// by blocked users
+			let fixedItems = []
+			items.forEach( item => {
+				if(!blockedUsers.includes(item[1].userEmail)) 
+					fixedItems.push(item)
+			})
+			// make sure if there are/is not more pages and return data
+			firebase.database().ref("posts").orderByChild('descDate').limitToFirst(props.count).startAt(lastDate).once("value", snap => {
+				// fixing the object once more
+				// yay firebase
+				let more = Object.keys(snap.val()).length > 1
+				resolve({more:more,items:fixedItems})
+			})
 		})
 	})
-})
+}
 export {getShareWallPostsByDescDateAndCount}
 
 const initializeFirebase = props => {

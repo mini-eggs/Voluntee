@@ -1,16 +1,44 @@
 import {Actions} from 'react-native-router-flux'
 
 import {saveLoginStateToLocalStorage} from './localStorage'
-import {login,register,blockUser} from './firebase'
+import {login,register,blockUser, removeCommentByKey} from './firebase'
+
+const removeCommentByKeyAction = async props => {
+	return new Promise( async (resolve, reject) => {
+		removeCommentByKey(props)
+			.then(data => {
+				Actions.modal({
+					header: 'Complete',
+					message: 'Comment has been removed',
+					onComplete:() => {
+						if(props.onComplete) props.onComplete()
+					}
+				})
+			})
+			.catch(err => {
+				Actions.modal({
+					header: 'Error',
+					message: 'Oops, an error has occurred',
+					onComplete:() => {}
+				})
+			})
+	})
+}
+export {removeCommentByKeyAction}
 
 const blockUserAction = async props => {
 	return new Promise( async (resolve, reject) => {
-		blockUser(props)
+		const onComplete = props.onComplete
+		const data = props
+		delete data.onComplete
+		blockUser(data)
 			.then(data => {
 				Actions.modal({
 					header: 'Complete',
 					message: `${props.userBlockedDisplayName} has been blocked`,
-					onComplete:() => {}
+					onComplete:() => {
+						if(onComplete) onComplete()
+					}
 				})
 			})
 			.catch(err => {

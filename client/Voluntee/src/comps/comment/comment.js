@@ -48,7 +48,7 @@ class CommentComp extends React.Component {
     		<View>
     			<CommentCreate data={{key:this.state.key, ref:this.state.ref, parent:this}} />
     			<View style={{height:10}} />
-    			<CommentList comments={this.state.comments} />
+    			<CommentList data={{comments:this.state.comments, parent:this}} />
     		</View>
     	)
   	}

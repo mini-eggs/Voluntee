@@ -4,7 +4,7 @@ import {Actions} from 'react-native-router-flux'
 import {Button,Avatar,ListItem} from 'react-native-material-ui'
 
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
-import {blockUserAction} from '../../general/userActions'
+import {blockUserAction, removeCommentByKeyAction} from '../../general/userActions'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
 import {style} from './style'
 
@@ -55,44 +55,28 @@ const UserDescCompStyle = {
 }
 
 const buttons = ['message user', 'report comment', 'hide comment', 'block user', 'dismiss']
+const buttonsAlt = ['remove comment', 'dismiss']
 
 const onCommentButtonPress = async props => {
-
 	// @props
 	// index
 	// comment
+	// parent
 	// @
-
 	const index = parseInt(props.index)
-
 	switch(index) {
 		case 0:
-			if(__DEV__) {
-				console.log('send user a message')
-				console.log(props.comment)
-			}
 			break;
 		case 1:
-			if(__DEV__) {
-				console.log('report the comment')
-				console.log(props.comment)
-			}
 			break;
 		case 2:
-			if(__DEV__) {
-				console.log('hide the comment')
-				console.log(props.comment)
-			}
 			break;
 		case 3:
-			if(__DEV__) {
-				console.log('block the user')
-				console.log(props.comment)
-			}
 			const blockData = {
 				userEmail: Actions.user.email,
 				userBlocked: props.comment.userEmail,
-				userBlockedDisplayName: props.comment.userDisplayName
+				userBlockedDisplayName: props.comment.userDisplayName,
+				onComplete: () => { props.parent.componentWillLoadComments() }
 			}
 			blockUserAction(blockData)
 			break;
@@ -103,7 +87,27 @@ const onCommentButtonPress = async props => {
 	}
 }
 
-const showCommentOptions = comment => {
+// this method is for
+// deleting the user's own
+// comment
+// maybe more in the future
+const onCommentButtonPressAlt = async props => {
+	const index = parseInt(props.index)
+	switch(index) {
+		case 0:
+			const removeData = {
+				key: props.comment.commentKey,
+				onComplete: () => { props.parent.componentWillLoadComments() }
+			}
+			removeCommentByKeyAction(removeData)
+			break;
+		case 1:
+		default:
+			break;
+	}
+}
+
+const showCommentOptions = props => {
 	// @props
 	// comment object from firebase
 	// @
@@ -111,13 +115,25 @@ const showCommentOptions = comment => {
 	// if user is signed in show
 	// options for comment, report/etc
 	// if not tell user they need to sign in
+	const comment = props.comment
+	const parent = props.parent
 	if(Actions.user) {
-		Actions.ActionSheet({
-	        onComplete: index => onCommentButtonPress({index:index, comment:comment}),
-	        buttons: buttons,
-	        title: 'comment options',
-	        cancelIndex:4
-	    })
+		if(Actions.user.email === comment.userEmail) {
+			Actions.ActionSheet({
+		        onComplete: index => onCommentButtonPressAlt({index:index, comment:comment, parent:parent}),
+		        buttons: buttonsAlt,
+		        title: 'comment options',
+		        cancelIndex:1
+		    })
+		}
+		else {
+			Actions.ActionSheet({
+		        onComplete: index => onCommentButtonPress({index:index, comment:comment, parent:parent}),
+		        buttons: buttons,
+		        title: 'comment options',
+		        cancelIndex:4
+		    })
+		}
 	}
 	// otherwise tell them to 
 	// get out!!!!!
@@ -132,7 +148,12 @@ const showCommentOptions = comment => {
 }
 
 const SingleComment = props => <View>
-	<TouchableOpacity style={{flexDirection:'row',justifyContent:'center'}} onPress={ () => { showCommentOptions(props.comment) }} >
+	<TouchableOpacity 
+		style={{flexDirection:'row',justifyContent:'center'}} 
+		onPress={ () => { 
+			showCommentOptions({comment:props.comment, parent:props.parent}) 
+		}} 
+	>
 		<View style={{flex:0.25}}>
 			<Image style={UserDescCompStyle.UserImage} source={{uri:props.comment.userPhoto}} />
 		</View>
@@ -152,7 +173,14 @@ const SingleComment = props => <View>
 
 const CommentSectionComp = props => <View style={UserDescCompStyle.Container}>
 	{
-		props.comments.map( (comment, index) => <SingleComment key={index} showDivider={props.comments.length > (index + 1)} comment={comment} />)
+		props.data.comments.map( (comment, index) => 
+			<SingleComment 
+				key={index} 
+				showDivider={props.data.comments.length > (index + 1)} 
+				comment={comment} 
+				parent={props.data.parent}
+				/>
+		)
 	}
 </View>
 
