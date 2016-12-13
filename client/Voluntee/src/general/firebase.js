@@ -31,6 +31,88 @@ const fixArrWithKey = props => props.arr.map( arr => {
 	return newArr
 })
 
+// interal
+const checkReportedStatus = async props => {
+	return new Promise( async (resolve, reject) => {
+		const reportedStatus = firebase.database().ref('reportedComments').orderByChild('userEmail').equalTo(props.userEmail)
+		reportedStatus.once('value', snap => {
+			const data = snap.val()
+			if(data) {
+				ObjToArr({obj:data}).forEach(item => {
+					if(item[1].userEmail === props.userEmail && item[1].key === props.key) reject()
+				})
+			}
+			resolve()
+		})
+	})
+}
+
+// internal
+const doReportComment = async props => {
+	return new Promise( async (resolve, reject) => {
+		const commentReportedKey = firebase.database().ref().child('reportedComments').push().key
+		const updates = {}
+	  	updates[`/reportedComments/${commentReportedKey}`] = props
+	  	const row = firebase.database().ref().update(updates)
+	  	resolve()
+	})
+}
+
+const reportCommentByKey = async props => {
+	// @props
+	// userEmail
+	// key
+	// @
+	return new Promise( async (resolve, reject) => {
+		checkReportedStatus(props)
+			.then(data => doReportComment(props))
+			.then(data => resolve())
+			.catch(err => reject())
+	})
+}
+export {reportCommentByKey}
+
+// internal
+const checkHiddenStatus = async props => {
+	return new Promise( async (resolve, reject) => {
+		const hiddenStatus = firebase.database().ref('hiddenComments').orderByChild('userEmail').equalTo(props.userEmail)
+		hiddenStatus.once('value', snap => {
+			const data = snap.val()
+			if(data) {
+				ObjToArr({obj:data}).forEach(item => {
+					if(item[1].userEmail === props.userEmail && item[1].key === props.key) reject()
+				})
+			}
+			resolve()
+		})
+	})
+}
+
+// internal
+const doHideComment = async props => {
+	return new Promise( async (resolve, reject) => {
+		const commmentHiddenKey = firebase.database().ref().child('hiddenComments').push().key
+		const updates = {}
+	  	updates[`/hiddenComments/${commmentHiddenKey}`] = props
+	  	const row = firebase.database().ref().update(updates)
+	  	resolve()
+	})
+}
+
+const hideCommentByKeyAndUserEmail = async props => {
+	// @props
+	// userEmail
+	// key
+	// @
+	return new Promise( async (resolve, reject) => {
+		checkHiddenStatus(props)
+			.then(data => doHideComment(props))
+			.then(data => resolve())
+			.catch(err => reject())
+	})
+}
+export {hideCommentByKeyAndUserEmail}
+
 // removeCommentByKey
 // delete comment 
 const removeCommentByKey = async props => {
@@ -69,6 +151,24 @@ const doBlockUser = async props => {
 	  	updates[`/blocked/${userBlockedKey}`] = props
 	  	const row = firebase.database().ref().update(updates)
 	  	resolve()
+	})
+}
+
+// internal
+const getHiddenCommentsByUserEmail = async props => {
+	return new Promise( async (resolve, reject) => {
+		const hiddenCommentRows = firebase.database().ref('hiddenComments').orderByChild('userEmail').equalTo(props.userEmail)
+		hiddenCommentRows.once('value', snap => {
+			const data = snap.val()
+			if(!data) resolve([])
+			else {
+				resolve(
+					ObjToArr({obj:data}).map( row => {
+						return row[1].key
+					})
+				)
+			}
+		})
 	})
 }
 
@@ -374,6 +474,12 @@ const getCommentsFromKey = async props => {
 			blockedUsers = await getBlockedUsersByUserEmail({userEmail:Actions.user.email})
 		}
 
+		// check if the user is signed in and if they have hidden any comments
+		let hiddenComments = []
+		if(Actions.user) {
+			hiddenComments = await getHiddenCommentsByUserEmail({userEmail:Actions.user.email})
+		}
+
 		firebase.database().ref('comments').orderByChild('key').equalTo(props.key).once("value", snap => {
 			// there is no data with that key
 			// return an empty list
@@ -385,8 +491,8 @@ const getCommentsFromKey = async props => {
 			// firebase is janky, fix the data
 			let comments = fixArrWithKey({arr:ObjToArr({obj:snap.val()})}).reverse()
 			let commentsFixed = []
-			comments.forEach( comment => {
-				if(!blockedUsers.includes(comment.userEmail)) {
+			comments.forEach(comment => {
+				if(!blockedUsers.includes(comment.userEmail) && !hiddenComments.includes(comment.commentKey)) {
 					commentsFixed.push(comment)
 				}
 			})

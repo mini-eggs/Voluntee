@@ -4,7 +4,7 @@ import {Actions} from 'react-native-router-flux'
 import {Button,Avatar,ListItem} from 'react-native-material-ui'
 
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
-import {blockUserAction, removeCommentByKeyAction} from '../../general/userActions'
+import {blockUserAction, removeCommentByKeyAction, hideCommentAction, reportCommentAction} from '../../general/userActions'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
 import {style} from './style'
 
@@ -66,10 +66,24 @@ const onCommentButtonPress = async props => {
 	const index = parseInt(props.index)
 	switch(index) {
 		case 0:
+			//message user
 			break;
 		case 1:
+			// report comment
+			const reportedCommentData = {
+				key: props.comment.commentKey,
+				userEmail: Actions.user.email
+			}
+			reportCommentAction(reportedCommentData)
 			break;
 		case 2:
+			// hide comment
+			const hideCommentData = {
+				key: props.comment.commentKey,
+				userEmail: Actions.user.email,
+				onComplete: () => { props.parent.componentWillLoadComments() }
+			}
+			hideCommentAction(hideCommentData)
 			break;
 		case 3:
 			const blockData = {
@@ -90,7 +104,7 @@ const onCommentButtonPress = async props => {
 // this method is for
 // deleting the user's own
 // comment
-// maybe more in the future
+// maybe more in the future	
 const onCommentButtonPressAlt = async props => {
 	const index = parseInt(props.index)
 	switch(index) {

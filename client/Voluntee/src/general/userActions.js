@@ -1,7 +1,53 @@
 import {Actions} from 'react-native-router-flux'
 
 import {saveLoginStateToLocalStorage} from './localStorage'
-import {login,register,blockUser, removeCommentByKey} from './firebase'
+import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey} from './firebase'
+
+const reportCommentAction = async props => {
+	return new Promise( async (resolve, reject) => {
+		reportCommentByKey(props)
+			.then(data => {
+				Actions.modal({
+					header: 'Complete',
+					message: 'Comment has been reported'
+				})
+			})
+			.catch(err => {
+				Actions.modal({
+					header: 'Error',
+					message: 'Comment has already been reported',
+					onComplete:() => {}
+				})
+			})
+	})
+}
+export {reportCommentAction}
+
+const hideCommentAction = async props => {
+	return new Promise( async (resolve, reject) => {
+		const onComplete = props.onComplete
+		const data = props
+		delete data.onComplete
+		hideCommentByKeyAndUserEmail(data)
+			.then(data => {
+				Actions.modal({
+					header: 'Complete',
+					message: 'Comment has been hidden',
+					onComplete:() => {
+						if(onComplete) onComplete()
+					}
+				})
+			})
+			.catch(err => {
+				Actions.modal({
+					header: 'Error',
+					message: 'Oops, an error has occurred',
+					onComplete:() => {}
+				})
+			})
+	})
+}
+export {hideCommentAction}
 
 const removeCommentByKeyAction = async props => {
 	return new Promise( async (resolve, reject) => {
