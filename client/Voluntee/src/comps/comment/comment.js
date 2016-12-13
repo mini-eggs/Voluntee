@@ -24,9 +24,18 @@ class CommentComp extends React.Component {
 		this.componentWillLoadComments()
 	}
 
+	// we dont want user to be able
+	// to click on a comment
+	// they just deleted or a comment
+	// the just hide/reported/blocked the user of
 	componentWillLoadComments(){
-		getCommentsFromKey({key:this.state.key})
-			.then( data => this.setState({comments:data}))
+		const refreshState = new Promise( async (resolve, reject) => {
+			this.state({comments:[]}, resolve())
+		})
+		refreshState.then( () => {
+			getCommentsFromKey({key:this.state.key})
+				.then( data => this.setState({comments:data}))
+		})
 	}
 
 	// this will be hit
