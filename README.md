@@ -6,4 +6,4 @@
 
 - Participate in a community
 
-![screenshots](https://github.com/mini-eggs/Voluntee/blob/master/artwork/mocs.png?raw=true)
+![screenshots](https://github.com/mini-eggs/Voluntee/blob/master/artwork/screenies.png?raw=true)

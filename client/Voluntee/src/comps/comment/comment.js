@@ -30,7 +30,7 @@ class CommentComp extends React.Component {
 	// the just hide/reported/blocked the user of
 	componentWillLoadComments(){
 		const refreshState = new Promise( async (resolve, reject) => {
-			this.state({comments:[]}, resolve())
+			this.setState({comments:[]}, resolve())
 		})
 		refreshState.then( () => {
 			getCommentsFromKey({key:this.state.key})
