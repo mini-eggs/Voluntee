@@ -31,6 +31,29 @@ const fixArrWithKey = props => props.arr.map(arr => {
   return newArr
 })
 
+const getMessagesByUserEmailAndDescDate = async props => {
+
+	// @props
+	// userEmail
+	// descDate
+	// @
+
+	return new Promise( async (resolve, reject) => {
+
+		resolve()
+
+		// TODO
+		// i think i'm going to create another
+		// row in firebase called `messageParent`
+		// that stores references (?)
+
+    // const messagesFrom = firebase.database().ref('messages').orderByChild('fromUserEmail').equalTo(props.userEmail)
+    // const messagesTo = firebase.database().ref('messages').orderByChild('toUserEmail').equalTo(props.userEmail)
+
+	})
+}
+export {getMessagesByUserEmailAndDescDate}
+
 const createMessage = async props => {
   return new Promise(async(resolve, reject) => {
     const messageKey = firebase.database().ref().child('messages').push().key

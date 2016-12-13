@@ -5,27 +5,63 @@ import {Actions} from 'react-native-router-flux'
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
 import Base from '../base/base'
-// import {} from '../../general/firebase'
+import {getMessagesByUserEmailAndDescDate} from '../../general/firebase'
 import {darkGreen} from '../../general/general'
+
+const defaultStartingState = {
+    loading:true,
+    loadingNextPage:false,
+    morePages:false,
+    events:[],
+    page:0,
+    count:10,
+    descDate:null
+}
 
 class MessageComp extends React.Component {
 
     constructor(props) {
         super(props)
-        this.state = {
-            loading:true,
-            loadingNextPage:false,
-            morePages:true,
-            page:0,
-            events:[]
-        }
+        this.state = defaultStartingState
     }
 
     async componentDidMount() {
 
+    	if(!Actions.user) {
+      	Actions.modal({
+        	header:'No user',
+         	message:'Please sign in to continue',
+        	onComplete: event => Actions.Account()
+      	})
+    	}
+
+    	else {
+    		this.componentWillGetMessages()
+    	}
     }
 
-    componentWillGetMessages() {
+    async componentWillGetMessages() {
+
+    	const getMessagesData = {
+    		userEmail: Actions.user.email,
+    		descDate: this.state.descDate
+    	}
+    	const messages = getMessagesByUserEmailAndDescDate(getMessagesData)
+
+    	messages.then(messages => {
+    		if(__DEV__) console.log(message)
+
+    	})
+
+    	messages.catch(err => {
+    		if(__DEV__) console.log(err)
+    		this.setState({loading:false, loadingNextPage:false, morePages:false})
+    		Actions.modal({
+    			header: 'Error',
+    			message: 'Opps, something went wrong',
+    			onComplete: () => {}
+    		})
+    	})
 
         // let data = {zip:this.state.zip,page:this.state.page}
         // searchOpportunities(data)
@@ -38,7 +74,11 @@ class MessageComp extends React.Component {
     }
 
     componentWillLoadNextPage() {
-        this.setState({page:(this.state.page + 1),loadingNextPage:true}, this.componentWillSearchOpportunities)
+    	const loadNextPageData = {
+    		page:(this.state.page + 1), 
+    		loadingNextPage:true
+    	}
+      this.setState(loadNextPageData, this.componentWillGetMessages)
     }
 
   	render() {
