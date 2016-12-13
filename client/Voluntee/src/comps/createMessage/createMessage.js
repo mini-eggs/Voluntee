@@ -9,32 +9,32 @@ import CreateForm from './form'
 
 class CreateShare extends React.Component {
 
-	constructor(props) {
-		super(props)
-		this.state = {
-			to: props.to
-		}
-	}
+  constructor(props) {
+    super(props)
+    this.state = {
+      to: props.to
+    }
+  }
 
-	async componentDidMount() {  
+  async componentDidMount() {  
 
-		// check if we have a
-		// user logged in
-		// pop component if not
-		Actions.user ? 'valid' : Actions.modal({
-			header:'No user',
-			message:'Please sign in to continue',
-			onComplete: event => Actions.pop()
-		})
-	}
+    // check if we have a
+    // user logged in
+    // pop component if not
+    Actions.user ? 'valid' : Actions.modal({
+      header:'No user',
+      message:'Please sign in to continue',
+      onComplete: event => Actions.pop()
+    })
+  }
 
-  	render() {
-    	return (
-    		<Base>
-    			<CreateForm to={this.state.to} parent={this}/>
-    		</Base>
-    	)
-  	}
+    render() {
+      return (
+        <Base>
+          <CreateForm to={this.state.to} parent={this}/>
+        </Base>
+      )
+    }
 }
 
 export default CreateShare
