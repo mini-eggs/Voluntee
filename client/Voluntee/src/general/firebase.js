@@ -31,6 +31,17 @@ const fixArrWithKey = props => props.arr.map( arr => {
 	return newArr
 })
 
+const createMessage = async props => {
+	return new Promise( async (resolve, reject) => {
+		const messageKey = firebase.database().ref().child('messages').push().key
+		const updates = {}
+	  	updates[`/messages/${messageKey}`] = props
+	  	const row = firebase.database().ref().update(updates)
+	  	resolve()
+	})
+}
+export {createMessage}
+
 // interal
 const checkReportedStatus = async props => {
 	return new Promise( async (resolve, reject) => {

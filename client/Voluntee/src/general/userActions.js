@@ -1,7 +1,34 @@
 import {Actions} from 'react-native-router-flux'
 
 import {saveLoginStateToLocalStorage} from './localStorage'
-import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey} from './firebase'
+import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage} from './firebase'
+
+const createMessageAction = async props => {
+	return new Promise( async (resove, reject) => {
+
+		const onComplete = props.onComplete
+		const data = props
+		delete data.onComplete
+
+		const message = createMessage(data)
+
+		message.then(data => {
+			Actions.modal({
+				header: 'Complete',
+				message: `Message has been sent to ${props.toUserDisplayName}`,
+				onComplete: () => { onComplete() }
+			})
+		})
+
+		message.catch(err => {
+			Actions.modal({
+				header: 'Error',
+				message: 'Oops, something went wrong'
+			})
+		})
+	})
+}
+export {createMessageAction}
 
 const reportCommentAction = async props => {
 	return new Promise( async (resolve, reject) => {

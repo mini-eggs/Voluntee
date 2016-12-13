@@ -11,7 +11,9 @@ class CreateShare extends React.Component {
 
 	constructor(props) {
 		super(props)
-		this.state = {}
+		this.state = {
+			to: props.to
+		}
 	}
 
 	async componentDidMount() {  
@@ -29,7 +31,7 @@ class CreateShare extends React.Component {
   	render() {
     	return (
     		<Base>
-    			<CreateForm parent={this}/>
+    			<CreateForm to={this.state.to} parent={this}/>
     		</Base>
     	)
   	}

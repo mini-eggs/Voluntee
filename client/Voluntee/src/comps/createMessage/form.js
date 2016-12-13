@@ -6,6 +6,7 @@ import * as firebase from 'firebase'
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
 import {createSharePost} from '../../general/firebase'
+import {createMessageAction} from '../../general/userActions'
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
 
 const inline = {
@@ -45,11 +46,12 @@ class CreateForm extends React.Component {
 		super(props)
 		this.setEvents()
 		this.state = {
-			title:null,
-			description:null,
-			parent:props.parent,
-			loading:false,
-			message: null
+			title: null,
+			description: null,
+			parent: props.parent,
+			loading: false,
+			message: null,
+			to: props.to
 		}
 	}
 
@@ -80,11 +82,14 @@ class CreateForm extends React.Component {
 			const messageData = {
 				date: milli,
 				descDate: 0-milli,
-				userEmail:Actions.user.email,
-				userDisplayName:firebase.auth().currentUser.displayName,
-				userPhoto:firebase.auth().currentUser.photoURL,
+				toUserEmail: this.state.to.userEmail,
+				toUserDisplayName: this.state.to.userDisplayName,
+				toUserPhoto: this.state.to.userPhoto,
+				fromUserEmail:Actions.user.email,
+				fromUserDisplayName:firebase.auth().currentUser.displayName,
+				fromUserPhoto:firebase.auth().currentUser.photoURL,
 				message: this.state.message,
-				onComplete: () => { this.setState({loading:false}) }
+				onComplete: () => { this.setState({loading:false}, Actions.popRefresh) }
 			}
 			createMessageAction(messageData)
 		})
