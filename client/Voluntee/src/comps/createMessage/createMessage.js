@@ -14,14 +14,16 @@ class CreateShare extends React.Component {
 		this.state = {}
 	}
 
-	async componentDidMount() {
-		if(!Actions.user){
-			Actions.modal({
-				header:'No user',
-				message:'Please sign in to continue',
-				onComplete: event => Actions.pop()
-			})
-		}
+	async componentDidMount() {  
+
+		// check if we have a
+		// user logged in
+		// pop component if not
+		Actions.user ? 'valid' : Actions.modal({
+			header:'No user',
+			message:'Please sign in to continue',
+			onComplete: event => Actions.pop()
+		})
 	}
 
   	render() {

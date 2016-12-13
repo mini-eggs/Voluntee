@@ -2,6 +2,7 @@ import React from 'react'
 import {Text,View,TouchableOpacity,TextInput,Image,ActivityIndicator} from 'react-native'
 import {Actions} from 'react-native-router-flux'
 import {Button,Avatar,ListItem} from 'react-native-material-ui'
+import * as Firebase from 'firebase'
 
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
 import {blockUserAction, removeCommentByKeyAction, hideCommentAction, reportCommentAction} from '../../general/userActions'
@@ -67,6 +68,17 @@ const onCommentButtonPress = async props => {
 	switch(index) {
 		case 0:
 			//message user
+			console.log(props.comment)
+			console.log(Firebase.auth().currentUser)
+			const messageData = {
+				title: props.comment.userDisplayName,
+				to: {
+					userDisplayName: props.comment.userDisplayName,
+					userEmail: props.comment.userEmail,
+					userPhoto: props.comment.userPhoto
+				}
+			}
+			Actions.CreateMessage(messageData)
 			break;
 		case 1:
 			// report comment

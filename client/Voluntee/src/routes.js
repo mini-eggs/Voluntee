@@ -5,6 +5,8 @@ import {Scene,Router,Actions} from 'react-native-router-flux'
 
 import AccountComp from './comps/account/account'
 import BagdeComp from './comps/badges/badges'
+import MessageComp from './comps/message/message'
+import CreateMessageComp from './comps/createMessage/createMessage'
 import SavedComp from './comps/saved/saved'
 import EventComp from './comps/event/event'
 import ItemComp from './comps/items/items'
@@ -20,11 +22,10 @@ import BackIcon from './assets/img/back.png'
 import CheckIcon from './assets/img/check.png'
 import {style} from './style'
 
-/* INITIALIZE BRANDING */
 const logo = 'https://i.imgur.com/f1NfVRM.png'
+
 const headerLogo = <Image resizeMode={'contain'} style={style.titleImage} source={{uri:logo}} />
 
-/* INITIALIZE DEFAULT FOR ACTION BAR */
 const leftMap = {
     leftButtonImage:MapIcon,
     leftButtonIconStyle:style.icon,
@@ -40,13 +41,7 @@ const leftCreate = {
 const rightInbox = {
     rightButtonImage:InboxIcon,
     rightButtonIconStyle:style.icon,
-    onRight: event => {
-        Actions.changeModal({
-            header: 'Development',
-            message: 'This feature has not yet been implemented'
-        })
-        Actions.showModal()
-    }
+    onRight: event => Actions.MessageComp()
 }
 
 const rightPlaceMap = {
@@ -80,17 +75,30 @@ const rightCreateShareButton = {
     onRight: event => { Actions.submitSharePostRightButton(event) }
 }
 
-const Routes = props => <Router>
-		<Scene key="root">
-			<Scene title="Discover" key="Discover" {...leftMap} {...rightInbox} {...defaultScene} component={ItemComp} initial />
-			<Scene title="Saved" key="Saved" {...leftMap} {...rightInbox} {...defaultScene} component={SavedComp} />
-			<Scene title="Badges" key="Badges" {...rightInbox} {...defaultScene} component={BagdeComp} />
-            <Scene title="Share" key="Share" {...leftCreate} {...rightInbox} {...defaultScene} component={ShareComp} />
-            <Scene title="Post" key="CreateShare" {...rightCreateShareButton} {...defaultBackScene} component={CreateShareComp} />
-            <Scene title="Title Here" key="SingleShare" {...defaultBackScene} component={SingleShareComp} />
-            <Scene title="Single Event Title Here" key="SingleEvent" {...rightPlaceMap} {...defaultBackScene} {...forceRefreshOnBack} component={EventComp} />
-            <Scene title="Map Comp Title Here" key="MapComp" {...defaultBackScene} {...forceRefreshOnBack} component={MapComp} />
-			<Scene title="Account" key="Account" {...rightInbox} {...defaultScene} component={AccountComp} />
-		</Scene>
-	</Router>
+const rightCreateMessageButton = {
+    rightButtonImage:CheckIcon,
+    rightButtonIconStyle:style.icon,
+    onRight: event => { Actions.submitMessageRightButton(event) }
+}
+
+const Routes = props => {
+    return (
+        <Router>
+    		<Scene key="root">
+    			<Scene title="Discover" key="Discover" {...leftMap} {...rightInbox} {...defaultScene} component={ItemComp} initial />
+    			<Scene title="Saved" key="Saved" {...leftMap} {...rightInbox} {...defaultScene} component={SavedComp} />
+    			<Scene title="Badges" key="Badges" {...rightInbox} {...defaultScene} component={BagdeComp} />
+                <Scene title="Share" key="Share" {...leftCreate} {...rightInbox} {...defaultScene} component={ShareComp} />
+                <Scene title="Post" key="CreateShare" {...rightCreateShareButton} {...defaultBackScene} component={CreateShareComp} />
+                <Scene title="Message" key="CreateMessage" {...rightCreateShareButton} {...defaultBackScene} component={CreateMessageComp} />
+                <Scene title="Title Here" key="SingleShare" {...defaultBackScene} component={SingleShareComp} />
+                <Scene title="Single Event Title Here"  key="SingleEvent" {...rightPlaceMap} {...defaultBackScene} {...forceRefreshOnBack} component={EventComp} />
+                <Scene title="Messages" key="MessageComp" {...defaultScene} component={MessageComp} />
+                <Scene title="Map Comp Title Here" key="MapComp" {...defaultBackScene} {...forceRefreshOnBack} component={MapComp} />
+    			<Scene title="Account" key="Account" {...rightInbox} {...defaultScene} component={AccountComp} />
+    		</Scene>
+    	</Router>
+    )
+}
+
 export default Routes
