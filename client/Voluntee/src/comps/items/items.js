@@ -71,7 +71,20 @@ class Items extends React.Component {
                 console.log('Error in componentDidMount within items.js, error below: ')
                 console.log(err)
             }
-            noInternetConnection()
+
+            // no geo location
+            if(err.message === 'Location request timed out') {
+              Actions.modal({
+                header: 'Error',
+                message: 'Could not find current zip. Please make sure locations are enabled.',
+                onComplete: () => { this.setState({zip:'00000', loading: false, morePages:false, userWantsToChangeZip: true}) }
+              })
+            } 
+
+            // default / no internet
+            else {
+              noInternetConnection()
+            }
         }
     }
 
