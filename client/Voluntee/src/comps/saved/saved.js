@@ -1,13 +1,13 @@
-// dependencies
 import React from 'react'
 import {Text,ActivityIndicator,View,TextInput} from 'react-native'
 import {Actions} from 'react-native-router-flux'
-// custom components
+
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
 import {displayListOnMap} from '../map/general'
 import Base from '../base/base'
 import {getSavedEventsByUserEmail} from '../../general/firebase'
+import {noInternetConnection} from '../../general/userActions'
 import EventListComp from '../items/list'
 
 const defaultStartingState = {
@@ -67,30 +67,30 @@ class SavedEvents extends React.Component {
             })
         }
         catch(err) {
-            // show process has ended
-            this.setState({loading:false, morePages:false, loadingNextPage:false})
-            // an error has occurred
-            // use a general message for 
-            // now until this component
-            // has been tested more
-            if(__DEV__) console.log(err.status)
-            // get error message based on if
-            // status code then msg received
-            let msg = 'Oops, something went wrong'
-            if(typeof err.status !== 'undefined') {
-                if(err.status === 0) {
-                    // this signifies we're using
-                    // our custom fail message
-                    msg = err.msg
-                }
+            if(__DEV__) {
+              console.log(err.status)
             }
-            // tell the user what happened
-            Actions.changeModal({
-                header: 'Error',
-                message: msg,
-                onComplete: () => { Actions.Discover() }
-            })
-            Actions.showModal()
+            
+            this.setState({loading:false, morePages:false, loadingNextPage:false})
+
+            if(typeof err.status !== 'undefined') {
+
+                if(err.status === 0) {
+                  Actions.modal({
+                    header: 'Error',
+                    message: err.msg,
+                    onComplete: () => {}
+                  })
+                }
+
+                else {
+                  noInternetConnection()
+                }
+            } 
+
+            else {
+              noInternetConnection()
+            }
         }
     }
 

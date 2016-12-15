@@ -4,6 +4,7 @@ import {COLOR,ThemeProvider} from 'react-native-material-ui'
 import * as firebase from 'firebase'
 import Storage from 'react-native-storage'
 import {Actions} from 'react-native-router-flux'
+import codePush from 'react-native-code-push'
 
 import {lightGreen, darkGreen} from './general/general'
 import {startLocalStorage,getLoginStatusFromLocalStorage,saveLoginStateToLocalStorage} from './general/localStorage'
@@ -72,7 +73,29 @@ const Voluntee = props => {
     )
 }
 
-export default Voluntee
+/* CODEPUSH COMPONENT */
+
+const codePushOptions = {checkFrequency: codePush.CheckFrequency.ON_APP_RESUME}
+
+class CodePush extends React.Component {
+
+  async componentDidMount() {
+    codePush.sync({
+            updateDialog: true,
+            installMode: codePush.InstallMode.IMMEDIATE
+        })
+  }
+
+  render() {
+    return (
+      <Voluntee/>
+    )
+  }
+}
+
+const appBundle = codePush(codePushOptions)(CodePush)
+
+export default appBundle
 
 
 

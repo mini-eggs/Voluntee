@@ -3,6 +3,17 @@ import {Actions} from 'react-native-router-flux'
 import {saveLoginStateToLocalStorage} from './localStorage'
 import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage} from './firebase'
 
+const noInternetConnection = async props => {
+  return new Promise( async (resolve, reject) => {
+    Actions.modal({
+      header: 'Error',
+      message: 'No internect connection can be established',
+      onComplete: () => {}
+    })
+  })
+}
+export {noInternetConnection}
+
 const createMessageAction = async props => {
 	return new Promise( async (resove, reject) => {
 

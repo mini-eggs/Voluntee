@@ -11,6 +11,7 @@ import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap
 import {getHelloWorldFromVolunteerMatch,searchOpportunities} from '../../general/volunteerMatch'
 import {getLocation, getZipFromLatAndLong} from '../../general/geo'
 import {darkGreen} from '../../general/general'
+import {noInternetConnection} from '../../general/userActions'
 import EventListComp from './list'
 
 const style = {
@@ -70,6 +71,7 @@ class Items extends React.Component {
                 console.log('Error in componentDidMount within items.js, error below: ')
                 console.log(err)
             }
+            noInternetConnection()
         }
     }
 
@@ -89,14 +91,16 @@ class Items extends React.Component {
     }
 
     componentWillLoadNextPage(){
-        this.setState({page:(this.state.page + 1),loadingNextPage:true}, this.componentWillSearchOpportunities)
+      const newState = {page:(this.state.page + 1),loadingNextPage:true}
+      this.setState(newState, this.componentWillSearchOpportunities)
     }
 
     componentWillChangeZip(zip){
+
         if(!zip) return
 
         if(zip.toString().length === 5 && parseInt(zip).toString() === zip.toString()) {
-            let data = {
+            const data = {
                 userInputZip:'',
                 zip:zip,
                 page:0,
@@ -105,12 +109,13 @@ class Items extends React.Component {
                 userWantsToChangeZip:false
             }
             this.setState(data, this.componentWillSearchOpportunities)
-        } else {
-            Actions.changeModal({
+        }
+
+        else {
+            Actions.modal({
                 header:'Error',
                 message:'Zip has been entered incorrectly'
             })
-            Actions.showModal()
         }
     }
 
