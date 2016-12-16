@@ -2,6 +2,7 @@ import React from 'react'
 import {Text,ActivityIndicator,View,TextInput} from 'react-native'
 import {Actions} from 'react-native-router-flux'
 
+import SingleListItem from '../list/list'
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
 import Base from '../base/base'
@@ -12,9 +13,44 @@ const defaultStartingState = {
   loading: true,
   loadingNextPage: false,
   morePages: false,
-  events: [],
+  messages: [],
   count: 10,
   descDate: null
+}
+
+const MessageListComp = props => {
+  return (
+    <View>
+      {
+        props.list.map( (item, index) => {
+          let data = {
+            'userDisplayName' : item.fromUserDisplayName,
+            'latestMessage': item.message,
+            'userAvi': item.fromUserPhoto
+          }
+          if(item.fromUserEmail === Actions.user.email) {
+            data = {
+              'userDisplayName' : item.toUserDisplayName,
+              'latestMessage': item.message,
+              'userAvi': item.toUserPhoto
+            }
+          }
+          return (
+            <SingleListItem 
+              key={index}
+              onPress={ () => { console.log(item) } }
+              header={data.userDisplayName}
+              description={data.latestMessage}
+              avi={data.userAvi}
+              showDivider={props.list.length > (index + 1)}
+              headerLines={1}
+              bodyLines={1}
+            />
+          )
+        })
+      }
+    </View>
+  )
 }
 
 class MessageComp extends React.Component {
@@ -44,13 +80,18 @@ class MessageComp extends React.Component {
     const messageData = {
       userEmail: Actions.user.email,
       descDate: this.state.descDate,
-      size: this.state.coutn
+      size: this.state.count
     }
 
     try {
       
       const messages = await getMessageParentForUser(messageData)
       console.log(messages)
+      // todo
+      // set descDate by last
+      // item in messages
+      // for pages
+      this.setState({loading:false, morePages:messages.morePages, messages:messages.items, loadingNextPage: false})
 
     }
 
@@ -114,7 +155,7 @@ class MessageComp extends React.Component {
             </View>
             :
             <View>
-              <EventListComp list={this.state.events} />
+              <MessageListComp list={this.state.messages} />
               {this.state.loadingNextPage ? <Loader/> : <View/>}
               {
                 !this.state.loadingNextPage && this.state.morePages ? 

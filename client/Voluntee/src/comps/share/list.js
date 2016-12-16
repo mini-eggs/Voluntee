@@ -5,7 +5,6 @@ import {Button,Avatar,ListItem, Subheader, Toolbar } from 'react-native-material
 import * as firebase from 'firebase'
 
 import SingleListItem from '../list/list'
-
 import {lightGreen, facebookBlue, defaultGrey} from '../../general/general'
 import {addItemToProfile,getShareWallPostsCountByUserEmail} from '../../general/firebase'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'

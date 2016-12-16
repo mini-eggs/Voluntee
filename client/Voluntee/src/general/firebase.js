@@ -31,6 +31,11 @@ const fixArrWithKey = props => props.arr.map(arr => {
   return newArr
 })
 
+// pass in a key
+// and return all values
+// for that key
+const orderArrBy = props => _.sortBy(props.arr, props.key)
+
 // internal
 const getMessgeParentByUserEmailAndProp = async props => {
   // @props
@@ -61,8 +66,24 @@ const getMessageParentForUser = async props => {
     try {
       const messagesTo = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'toUserEmail'})
       const messagesFrom = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'fromUserEmail'})
-      const messages = messagesTo.concat(messagesFrom)
-      resolve(messages)
+      const messagesParent = orderArrBy({arr:messagesTo.concat(messagesFrom),key:'descDate'})
+      let items = []
+      let count = 0
+      messagesParent.forEach( (item, index) => {
+        if(count < props.size + 1) {
+          if(props.descDate) {
+            // complete
+          } else {
+            items.push(item)
+          }
+        }
+        count++
+      })
+      const morePages = items.length > props.size
+      if(morePages) {
+        items = items.splice(-1, 1)
+      }
+      resolve({items:items, morePages:morePages})
     }
     catch(err) {
       if(__DEV__) {
@@ -275,11 +296,6 @@ const blockUser = async props => {
   })
 }
 export {blockUser}
-
-// pass in a key
-// and return all values
-// for that key
-const orderArrBy = props => _.sortBy(props.arr, props.key)
 
 // update badge earned
 const updateBadgeByTitle = async props => {
