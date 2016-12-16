@@ -1,5 +1,11 @@
-import {Dimensions} from 'react-native'
 import ImagePicker from 'react-native-image-picker'
+import {screenHeight, screenWidth, screenArea, actionBarHeight, tabBarHeight} from './screen'
+
+export {screenHeight}
+export {screenWidth}
+export {screenArea}
+export {actionBarHeight}
+export {tabBarHeight}
 
 // small avi image config
 const defaultPhotoConfig = {
@@ -20,23 +26,8 @@ export {lightGreen}
 const facebookBlue = '#91a1c4'
 export {facebookBlue}
 
-const actionBarHeight = 65
-export {actionBarHeight}
-
-const tabBarHeight = 50
-export {tabBarHeight}
-
 const defaultGrey = '#bdbdbd'
 export {defaultGrey}
-
-const screenHeight = Dimensions.get('window').height
-export {screenHeight}
-
-const screenWidth = Dimensions.get('window').width
-export {screenWidth}
-
-const screenArea = screenHeight - tabBarHeight - actionBarHeight
-export {screenArea}
 
 const imagePicker = async props => {
 	return new Promise( async (resolve, reject) => {

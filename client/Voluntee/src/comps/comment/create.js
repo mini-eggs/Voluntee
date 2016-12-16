@@ -21,7 +21,8 @@ const inline = {
 		borderRadius:3,
 		margin:0,
 		padding:10,
-		borderWidth:3
+		borderWidth:3,
+    textAlignVertical: 'top'
 	}
 }
 

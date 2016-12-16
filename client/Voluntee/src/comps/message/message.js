@@ -5,7 +5,7 @@ import {Actions} from 'react-native-router-flux'
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
 import Base from '../base/base'
-import {getMessagesByUserEmailAndDescDate} from '../../general/firebase'
+import {getMessageParentForUser} from '../../general/firebase'
 import {darkGreen} from '../../general/general'
 
 const defaultStartingState = {
@@ -13,7 +13,6 @@ const defaultStartingState = {
   loadingNextPage: false,
   morePages: false,
   events: [],
-  page: 0,
   count: 10,
   descDate: null
 }
@@ -41,6 +40,31 @@ class MessageComp extends React.Component {
   }
 
   async componentWillGetMessages() {
+
+    const messageData = {
+      userEmail: Actions.user.email,
+      descDate: this.state.descDate,
+      size: this.state.coutn
+    }
+
+    try {
+      
+      const messages = await getMessageParentForUser(messageData)
+      console.log(messages)
+
+    }
+
+    catch(err) {
+      if(__DEV__) {
+        console.log('error in componentWillGetMessages withing messages.js Error below:')
+        console.log(err)
+      }
+      Actions.modal({
+        header: 'Error',
+        message: 'Could not retreive messages at this time',
+        onComplete: () => { Actions.popRefresh() }
+      })
+    }
 
     // const getMessagesData = {
     //   userEmail: Actions.user.email,

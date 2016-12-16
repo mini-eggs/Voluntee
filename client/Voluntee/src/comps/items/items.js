@@ -183,6 +183,7 @@ class Items extends React.Component {
                                             <ColSix>
                                                 <TextInput
                                                     style={style.TextInput}
+                                                    underlineColorAndroid='transparent'
                                                     onChangeText={ zip => { this.setState({userInputZip:zip}) } }
                                                     value={this.state.userInputZip}
                                                     placeholderTextColor={darkGreen}

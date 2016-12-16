@@ -31,36 +31,64 @@ const fixArrWithKey = props => props.arr.map(arr => {
   return newArr
 })
 
-const getMessagesByUserEmailAndDescDate = async props => {
+// internal
+const getMessgeParentByUserEmailAndProp = async props => {
+  // @props
+  // selectedProp
+  // userEmail
+  //@
+  return new Promise( async(resolve, reject) => {
+    const msg = firebase.database().ref('messagesParent').orderByChild(props.selectedProp).equalTo(props.userEmail)
+    msg.once('value', snap => {
+      const data = snap.val()
+      if(!data) {
+        resolve([])
+      }
+      else {
+        resolve(fixArrWithKey({arr:ObjToArr({obj:data})}))
+      }
+    })
+  })
+}
 
+const getMessageParentForUser = async props => {
 	// @props
 	// userEmail
-	// descDate
+	// descDate - optionsal
+  // size
 	// @
-
 	return new Promise( async (resolve, reject) => {
-
-		resolve()
-
-		// TODO
-		// i think i'm going to create another
-		// row in firebase called `messageParent`
-		// that stores references (?)
-
-    // const messagesFrom = firebase.database().ref('messages').orderByChild('fromUserEmail').equalTo(props.userEmail)
-    // const messagesTo = firebase.database().ref('messages').orderByChild('toUserEmail').equalTo(props.userEmail)
-
+    try {
+      const messagesTo = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'toUserEmail'})
+      const messagesFrom = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'fromUserEmail'})
+      const messages = messagesTo.concat(messagesFrom)
+      resolve(messages)
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log('Error in getMessageParentForUser within firebase.js Error below')
+        console.log(err)
+      }
+      reject()
+    }
 	})
 }
-export {getMessagesByUserEmailAndDescDate}
+export {getMessageParentForUser}
 
 const createMessage = async props => {
-  return new Promise(async(resolve, reject) => {
+  return new Promise( async (resolve, reject) => {
+    // create a refernce point 
+    const parentKey = firebase.database().ref().child('messagesParent').push().key
+    const parentUpdate = {}
+    parentUpdate[`/messagesParent/${parentKey}`] = props
+    const parentRow = firebase.database().ref().update(parentUpdate)
+    props.messagesParent = parentKey 
+    // create new messsage
     const messageKey = firebase.database().ref().child('messages').push().key
     const updates = {}
     updates[`/messages/${messageKey}`] = props
     const row = firebase.database().ref().update(updates)
-    resolve()
+    resolve([parentRow, row])
   })
 }
 export {createMessage}
