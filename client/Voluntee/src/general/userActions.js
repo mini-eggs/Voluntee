@@ -3,6 +3,28 @@ import {Actions} from 'react-native-router-flux'
 import {saveLoginStateToLocalStorage} from './localStorage'
 import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage} from './firebase'
 
+const genericError = async props => {
+  return new Promise( async (resolve, reject) => {
+    Actions.modal({
+      header: 'Error',
+      message: 'Oops, something went wrong',
+      onComplete: () => { resolve() }
+    })
+  })
+}
+export {genericError}
+
+const notLoggedIn = async props => {
+  return new Promise( async (resolve, reject) => {
+    Actions.modal({
+      header: 'No user',
+      message: 'Please sign in to continue',
+      onComplete: event => Actions.Account()
+    })
+  })
+}
+export {notLoggedIn}
+
 const noInternetConnection = async props => {
   return new Promise( async (resolve, reject) => {
     Actions.modal({

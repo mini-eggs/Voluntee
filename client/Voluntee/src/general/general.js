@@ -15,6 +15,12 @@ const defaultPhotoConfig = {
 	maxHeight:200
 }
 
+const defaultBackgroundColor = '#ffffff'
+export {defaultBackgroundColor}
+
+const defaultTextColor = '#ffffff'
+export {defaultTextColor}
+
 // original dark green 649c7a
 const darkGreen = '#cc5c5c'
 export {darkGreen}

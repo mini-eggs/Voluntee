@@ -4,8 +4,9 @@ import {Scene,Router,Actions} from 'react-native-router-flux'
 
 import AccountComp from './comps/account/account'
 import BagdeComp from './comps/badges/badges'
-import MessageComp from './comps/message/message'
 import CreateMessageComp from './comps/createMessage/createMessage'
+import MessageComp from './comps/message/message'
+import SingleMessageComp from './comps/singleMessage/singleMessage'
 import SavedComp from './comps/saved/saved'
 import EventComp from './comps/event/event'
 import ItemComp from './comps/items/items'
@@ -92,10 +93,11 @@ const Routes = props => {
         <Scene title="Badges" key="Badges" {...rightInbox} {...defaultScene} component={BagdeComp} />
         <Scene title="Share" key="Share" {...leftCreate} {...rightInbox} {...defaultScene} component={ShareComp} />
         <Scene title="Post" key="CreateShare" {...rightCreateShareButton} {...defaultBackScene} component={CreateShareComp} />
-        <Scene title="Message" key="CreateMessage" {...rightCreateMessageButton} {...defaultBackScene} {...forceRefreshOnBack} component={CreateMessageComp} />
         <Scene title="Title Here" key="SingleShare" {...defaultBackScene} {...rightInbox} component={SingleShareComp} />
         <Scene title="Single Event Title Here"  key="SingleEvent" {...rightPlaceMap} {...defaultBackScene} {...forceRefreshOnBack} component={EventComp} />
-        <Scene title="Messages" key="MessageComp" {...defaultScene} component={MessageComp} />
+        <Scene title="Message" key="CreateMessage" {...rightCreateMessageButton} {...defaultBackScene} {...forceRefreshOnBack} component={CreateMessageComp} />
+        <Scene title="Messages" key="MessageComp" {...defaultScene} {...defaultBackScene} {...forceRefreshOnBack} component={MessageComp} />
+        <Scene title="SingleMessage" key="SingleMessageComp" {...defaultScene} {...defaultBackScene} {...forceRefreshOnBack} component={SingleMessageComp} />
         <Scene title="Map Comp Title Here" key="MapComp" {...defaultBackScene} {...forceRefreshOnBack} component={MapComp} />
         <Scene title="Account" key="Account" {...rightInbox} {...defaultScene} component={AccountComp} />
       </Scene>

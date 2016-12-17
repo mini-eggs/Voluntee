@@ -1,13 +1,12 @@
 import React from 'react'
 import {Text,View,TouchableOpacity,TextInput,Image,ActivityIndicator} from 'react-native'
 import {Actions} from 'react-native-router-flux'
-import Base from '../base/base'
 import {Avatar} from 'react-native-material-ui'
 import * as firebase from 'firebase'
 
+import Base from '../base/base'
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
-
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
 import {addItemToProfile,getShareWallPostsCountByUserEmail,getDatabaseCategoryCountByRefAndTypeAndUserEmail} from '../../general/firebase'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
@@ -94,10 +93,10 @@ class UserComp extends React.Component {
 	constructor(props) {
 		super(props)
 
-		if(__DEV__) {
-			console.log('firebase user below:')
-			console.log(firebase.auth().currentUser)
-		}
+		// if(__DEV__) {
+		// 	console.log('firebase user below:')
+		// 	console.log(firebase.auth().currentUser)
+		// }
 
 		this.state = {
 			shareWallPosts:null,

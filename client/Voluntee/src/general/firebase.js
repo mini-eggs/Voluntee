@@ -36,6 +36,28 @@ const fixArrWithKey = props => props.arr.map(arr => {
 // for that key
 const orderArrBy = props => _.sortBy(props.arr, props.key)
 
+const getMessageThreadFromKey = async props => {
+  // @props
+  // key
+  // @
+  return new Promise( async (resolve, reject) => {
+    const messages = firebase.database().ref('messages').orderByChild('messagesParent').equalTo(props.key)
+    messages.once('value', snap => {
+      let data = snap.val()
+      if(!data) {
+        reject(`No messages can be found for key of ${props.key}`)
+      }
+      else {
+        data = ObjToArr({obj:data})
+        data = fixArrWithKey({arr:data})
+        data = orderArrBy({arr:data, key:'descDate'})
+        resolve(data)
+      }
+    })
+  })
+}
+export {getMessageThreadFromKey}
+
 // internal
 const getMessgeParentByUserEmailAndProp = async props => {
   // @props

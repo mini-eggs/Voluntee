@@ -8,6 +8,7 @@ import {Loader} from '../loader/loader'
 import Base from '../base/base'
 import {getMessageParentForUser} from '../../general/firebase'
 import {darkGreen} from '../../general/general'
+import {notLoggedIn} from '../../general/userActions'
 
 const defaultStartingState = {
   loading: true,
@@ -38,7 +39,7 @@ const MessageListComp = props => {
           return (
             <SingleListItem 
               key={index}
-              onPress={ () => { console.log(item) } }
+              onPress={ () => { Actions.SingleMessageComp({title:data.userDisplayName, item:item})} }
               header={data.userDisplayName}
               description={data.latestMessage}
               avi={data.userAvi}
@@ -63,11 +64,7 @@ class MessageComp extends React.Component {
   async componentDidMount() {
 
     if(!Actions.user) {
-      Actions.modal({
-        header: 'No user',
-        message: 'Please sign in to continue',
-        onComplete: event => Actions.Account()
-      })
+      notLoggedIn()
     }
 
     else {
