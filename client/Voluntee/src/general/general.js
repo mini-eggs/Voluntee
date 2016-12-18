@@ -1,11 +1,12 @@
 import ImagePicker from 'react-native-image-picker'
-import {screenHeight, screenWidth, screenArea, actionBarHeight, tabBarHeight} from './screen'
+import {screenHeight, screenWidth, screenArea, actionBarHeight, tabBarHeight, buttonHeight} from './screen'
 
 export {screenHeight}
 export {screenWidth}
 export {screenArea}
 export {actionBarHeight}
 export {tabBarHeight}
+export {buttonHeight}
 
 // small avi image config
 const defaultPhotoConfig = {

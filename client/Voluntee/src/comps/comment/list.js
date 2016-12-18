@@ -68,8 +68,6 @@ const onCommentButtonPress = async props => {
 	switch(index) {
 		case 0:
 			//message user
-			console.log(props.comment)
-			console.log(Firebase.auth().currentUser)
 			const messageData = {
 				title: props.comment.userDisplayName,
 				to: {

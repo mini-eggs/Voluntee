@@ -7,8 +7,38 @@ import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
 import Base from '../base/base'
 import {getMessageThreadFromKey} from '../../general/firebase'
-import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea} from '../../general/general'
+import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea, buttonHeight} from '../../general/general'
 import {notLoggedIn, genericError} from '../../general/userActions'
+
+const goToCreateMessageComp = props => {
+
+  const item = props.item
+
+  let user = {
+    userDisplayName: item.toUserDisplayName,
+    userEmail: item.toUserEmail,
+    userPhoto: item.toUserPhoto,
+  }
+
+  if(user.userEmail === Actions.user.email) {
+
+    let user = {
+      userDisplayName: item.fromUserDisplayName,
+      userEmail: item.fromUserEmail,
+      userPhoto: item.fromUserPhoto,
+    }
+
+  }
+
+  const messageData = {
+    title: user.userDisplayName,
+    to: user,
+    commentKey: props.key
+  }
+
+  Actions.CreateMessage(messageData)
+
+}
 
 const style = {
   BubbleTextWrap:{
@@ -88,7 +118,8 @@ class SingleMessageComp extends React.Component {
     this.state = {
       loading: true,
       messages: [],
-      key:props.item.commentKey
+      key:props.item.commentKey,
+      item: props.item
     }
   }
 
@@ -121,7 +152,16 @@ class SingleMessageComp extends React.Component {
           this.state.loading ?
             <Loader/>            
             :
-            <MessageListComp list={this.state.messages} />
+            <View>
+              <MessageListComp list={this.state.messages} />
+              <View
+                style={{marginTop: ( -1 * buttonHeight )}}
+              />
+              <Button 
+                onPress={ () => { goToCreateMessageComp({item:this.state.item, key:this.state.key}) } }
+                text='New Message'
+              />
+            </View>
         }
       </Base>
     )

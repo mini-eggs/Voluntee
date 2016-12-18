@@ -43,6 +43,7 @@ const inline = {
 class CreateForm extends React.Component {
 
   constructor(props) {
+
     super(props)
     this.setEvents()
     this.state = {
@@ -51,17 +52,22 @@ class CreateForm extends React.Component {
       parent: props.parent,
       loading: false,
       message: null,
-      to: props.to
+      to: props.to,
+      commentKey: props.commentKey
     }
+
   }
 
   setEvents() {
+
     Actions.submitMessageRightButton = async props => {
       this.submitMessage()
     }
+
   }
 
   async checkErrors() {
+
     const message = this.state.message
     return new Promise(async(resolve, reject) => {
       if(!message)
@@ -71,13 +77,21 @@ class CreateForm extends React.Component {
       else
         resolve()
     })
+
+  }
+
+  submitMessageWithProps(messageData) {
+
+    if(this.state.commentKey) {
+      messageData.commentKey = this.state.commentKey
+    }
+    createMessageAction(messageData)
+
   }
 
   async submitMessage() {
 
-    this.setState({
-      loading: true
-    })
+    this.setState({loading: true})
 
     const status = this.checkErrors()
 
@@ -99,7 +113,7 @@ class CreateForm extends React.Component {
           }, Actions.popRefresh)
         }
       }
-      createMessageAction(messageData)
+      this.submitMessageWithProps(messageData)
     })
 
     status.catch(() => {
@@ -113,18 +127,22 @@ class CreateForm extends React.Component {
         }
       })
     })
+
   }
 
   async clear() {
+
     return new Promise(async(resolve, reject) => {
       this.setState({
         title: null,
         description: null
       }, resolve())
     })
+
   }
 
   async error(msg) {
+
     return new Promise(async(resolve, reject) => {
       this.setState({
         loading: false
@@ -138,6 +156,7 @@ class CreateForm extends React.Component {
         })
       })
     })
+
   }
 
   render() {

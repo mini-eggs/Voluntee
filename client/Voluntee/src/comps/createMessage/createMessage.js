@@ -12,7 +12,8 @@ class CreateShare extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      to: props.to
+      to: props.to,
+      commentKey: props.commentKey
     }
   }
 
@@ -31,7 +32,7 @@ class CreateShare extends React.Component {
     render() {
       return (
         <Base>
-          <CreateForm to={this.state.to} parent={this}/>
+          <CreateForm commentKey={this.state.commentKey} to={this.state.to} parent={this}/>
         </Base>
       )
     }

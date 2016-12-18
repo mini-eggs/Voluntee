@@ -119,6 +119,11 @@ const getMessageParentForUser = async props => {
 export {getMessageParentForUser}
 
 const createMessage = async props => {
+
+  // TODO
+  // create comment within same
+  // thread if commentKey exists
+
   return new Promise( async (resolve, reject) => {
     // create a refernce point 
     const parentKey = firebase.database().ref().child('messagesParent').push().key

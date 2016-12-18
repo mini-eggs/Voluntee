@@ -14,3 +14,6 @@ export {screenWidth}
 
 const screenArea = screenHeight - tabBarHeight - actionBarHeight
 export {screenArea}
+
+const buttonHeight = 56
+export {buttonHeight}
