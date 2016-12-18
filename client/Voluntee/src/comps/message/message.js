@@ -57,8 +57,10 @@ const MessageListComp = props => {
 class MessageComp extends React.Component {
 
   constructor(props) {
+    
     super(props)
     this.state = defaultStartingState
+
   }
 
   async componentDidMount() {
@@ -70,6 +72,7 @@ class MessageComp extends React.Component {
     else {
       this.componentWillGetMessages()
     }
+
   }
 
   async componentWillGetMessages() {
@@ -104,42 +107,22 @@ class MessageComp extends React.Component {
       })
     }
 
-    // const getMessagesData = {
-    //   userEmail: Actions.user.email,
-    //   descDate: this.state.descDate
-    // }
-    // const messages = getMessagesByUserEmailAndDescDate(getMessagesData)
-
-    // messages.then(messages => {
-    //   if(__DEV__) console.log(message)
-    // })
-
-    // messages.catch(err => {
-    //   if(__DEV__) console.log(err)
-    //   this.setState({loading:false, loadingNextPage:false, morePages:false})
-    //   Actions.modal({
-    //     header: 'Error',
-    //     message: 'Opps, something went wrong',
-    //     onComplete: () => {}
-    //   })
-    // })
-
-    // let data = {zip:this.state.zip,page:this.state.page}
-    // searchOpportunities(data)
-    //     .then( events => {
-    //         let newEventsArr = [...this.state.events, ...events]
-    //         let morePages = (events.length >= 10)
-    //         this.setState({events:newEventsArr,loading:false,loadingNextPage:false, morePages:morePages})
-    //     })
-    //     .catch( err => console.log(err))
   }
 
   componentWillLoadNextPage() {
+
     const loadNextPageData = {
       page: (this.state.page + 1),
       loadingNextPage: true
     }
     this.setState(loadNextPageData, this.componentWillGetMessages)
+    
+  }
+
+  componentWillReceiveProps() {
+
+    this.setState(defaultStartingState, this.componentWillGetMessages)
+
   }
 
   render() {
