@@ -21,6 +21,7 @@ import InboxIcon from './assets/img/inbox.png'
 import BackIcon from './assets/img/back.png'
 import CheckIcon from './assets/img/check.png'
 import SendIcon from './assets/img/send.png'
+import MoreIcon from './assets/img/more.png'
 import {style} from './style'
 
 const logo = 'https://i.imgur.com/f1NfVRM.png'
@@ -84,6 +85,12 @@ const rightCreateMessageButton = {
   onRight: () => Actions.submitMessageRightButton()
 }
 
+const rightMoreOptionsButton = {
+  rightButtonImage: MoreIcon,
+  rightButtonIconStyle: style.icon,
+  onRight: () => Actions.moreOptionsRightButton()
+}
+
 const Routes = props => {
   return (
     <Router>
@@ -97,7 +104,7 @@ const Routes = props => {
         <Scene title="Single Event Title Here"  key="SingleEvent" {...rightPlaceMap} {...defaultBackScene} {...forceRefreshOnBack} component={EventComp} />
         <Scene title="Message" key="CreateMessage" {...rightCreateMessageButton} {...defaultBackScene} {...forceRefreshOnBack} component={CreateMessageComp} />
         <Scene title="Messages" key="MessageComp" {...defaultScene} {...defaultBackScene} {...forceRefreshOnBack} component={MessageComp} />
-        <Scene title="SingleMessage" key="SingleMessageComp" {...defaultScene} {...defaultBackScene} {...forceRefreshOnBack} component={SingleMessageComp} />
+        <Scene title="SingleMessage" key="SingleMessageComp" {...defaultScene} {...defaultBackScene} {...forceRefreshOnBack} {...rightMoreOptionsButton} component={SingleMessageComp} />
         <Scene title="Map Comp Title Here" key="MapComp" {...defaultBackScene} {...forceRefreshOnBack} component={MapComp} />
         <Scene title="Account" key="Account" {...rightInbox} {...defaultScene} component={AccountComp} />
       </Scene>

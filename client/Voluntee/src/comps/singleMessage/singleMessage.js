@@ -7,7 +7,7 @@ import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
 import Base from '../base/base'
 import {getMessageThreadFromKey} from '../../general/firebase'
-import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea, buttonHeight} from '../../general/general'
+import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea, buttonHeight, screenWidth} from '../../general/general'
 import {notLoggedIn, genericError} from '../../general/userActions'
 
 const goToCreateMessageComp = props => {
@@ -42,15 +42,14 @@ const goToCreateMessageComp = props => {
 
 const style = {
   AllMessagesContainer: {
-    paddingTop:10,
-    paddingBottom:10
   },
   BubbleTextWrap:{
     backgroundColor:lightGreen,
     padding:5,
     paddingLeft:15, 
     paddingRight:15, 
-    borderRadius:15
+    borderRadius:15,
+    maxWidth: (screenWidth * 0.70)
   },
   Text:{
     color:defaultTextColor
@@ -58,13 +57,14 @@ const style = {
   Background:{
     backgroundColor:defaultBackgroundColor,
     minHeight: screenArea,
-    paddingTop:10,
-    paddingBottom:10
+    padding:5
   },
   TextBubble:{
   },
   Container:{
-    padding:10,
+    padding:5,
+    paddingLeft:0, 
+    paddingRight:0,
     backgroundColor:defaultBackgroundColor,
   },
   PositionRight:{
@@ -120,12 +120,61 @@ class SingleMessageComp extends React.Component {
 
   constructor(props) {
     super(props)
+    this.setEvents()
     this.state = {
       loading: true,
       messages: [],
       key:props.item.commentKey,
       item: props.item
     }
+  }
+
+  setEvents() {
+
+    // TODO
+    // add ability to remove
+    // a convo
+
+    Actions.moreOptionsRightButton = props => this.showOptions()
+
+  }
+
+  showOptions() {
+
+    const options = [
+      'remove convo',
+      'hide convo',
+      'block user',
+      'dismiss'
+    ]
+
+    Actions.ActionSheet({
+      onComplete: index => { this.userHasChosenOption({index:index}) },
+      buttons: options,
+      title: 'convo options',
+      cancelIndex: 3
+    })
+
+  }
+
+  userHasChosenOption(props) {
+
+    const index = parseInt(props.index)
+
+    switch(index) {
+      case 0: 
+        console.log('remove convo')
+        break;
+      case 1: 
+        console.log('hide convo')
+        break;
+      case 2: 
+        console.log('block user')
+        break;
+      default:
+        break;
+    }
+
   }
 
   componentWillReceiveProps() {
