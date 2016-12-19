@@ -8,7 +8,7 @@ import {Loader} from '../loader/loader'
 import Base from '../base/base'
 import {getMessageThreadFromKey} from '../../general/firebase'
 import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea, buttonHeight, screenWidth} from '../../general/general'
-import {notLoggedIn, genericError} from '../../general/userActions'
+import {notLoggedIn, genericError, removeConvoAction} from '../../general/userActions'
 
 const goToCreateMessageComp = props => {
 
@@ -164,6 +164,7 @@ class SingleMessageComp extends React.Component {
     switch(index) {
       case 0: 
         console.log('remove convo')
+        removeConvoAction()
         break;
       case 1: 
         console.log('hide convo')

@@ -32,18 +32,21 @@ const style = {
 	}
 }
 
+const initialState = {
+  modalVisible:false,
+  message:'Hello World!',
+  header:'New Modal',
+  onComplete:false,
+  onFail:false
+}
+
 export default class extends React.Component{
 
 	constructor(props){
 		super(props)
 		// set initial state
 		this.registerEvents()
-		this.state = {
-			modalVisible:false,
-			message:'Hello World!',
-			header:'New Modal',
-			onComplete:false
-		}
+		this.state = initialState
 	}
 
 	// register events to be
@@ -79,7 +82,7 @@ export default class extends React.Component{
 	// of modal globally
 	async changeModal(props) {
 		return new Promise( async (resolve, reject) => {
-			this.setState(props, resolve) 
+      this.setState(initialState, () => { this.setState(props, resolve) })
 		})
 	}
 
@@ -91,27 +94,48 @@ export default class extends React.Component{
 	}
 
 	// call to hide modal
-	hideModal(event){
+	hideModal(event) {
 		if(this.state.onComplete) this.state.onComplete()
 		this.setState({modalVisible:false})
 	}
 
+  hideModalFail(event) {
+    if(this.state.onFail) this.state.onFail()
+    this.setState({modalVisible:false})
+  }
+
 	render(){
 		return (
 			<Modal
-	          	animationType={"fade"}
-	          	transparent={true}
-	          	visible={this.state.modalVisible}
-	       	>
-	        	<View style={style.container}>
-		   			<View style={style.inner}>
-		           		<Text style={style.TextHeader}>{this.state.header}</Text>
-		               	<Text style={style.Text}>{this.state.message}</Text>
-		              	<View style={{height:15}} />
-    					<Button radius={true} raised primary text="DISMISS" onPress={ e => { this.hideModal(e) }} />
-		          	</View>
-	         	</View>
-	        </Modal>
+	      animationType={"fade"}
+	      transparent={true}
+	      visible={this.state.modalVisible}
+	    >
+	      <View style={style.container}>
+		      <View style={style.inner}>
+		        <Text style={style.TextHeader}>{this.state.header}</Text>
+		        <Text style={style.Text}>{this.state.message}</Text>
+		        <View style={{height:15}} />
+            {
+              !this.state.onFail ?
+                <Button radius={true} raised primary text="DISMISS" onPress={ e => { this.hideModal(e) }} />
+                :
+                <View style={{flexDirection:'row'}}>
+                  <View style={{flex:0.5}}>
+                    <View style={{marginRight:7.5}}>
+                      <Button radius={true} raised primary text="DISMISS" onPress={ e => { this.hideModalFail(e) }} />
+                    </View>
+                  </View>
+                  <View style={{flex:0.5}}>
+                    <View style={{marginLeft:7.5}}>
+                      <Button radius={true} raised primary text="CONTINUE" onPress={ e => { this.hideModal(e) }} />
+                    </View>
+                  </View>
+                </View>
+            }
+		      </View>
+	      </View>
+	    </Modal>
 		)
 	}
 }

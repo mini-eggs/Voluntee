@@ -22,6 +22,7 @@ import BackIcon from './assets/img/back.png'
 import CheckIcon from './assets/img/check.png'
 import SendIcon from './assets/img/send.png'
 import MoreIcon from './assets/img/more.png'
+import InfoIcon from './assets/img/info.png'
 import {style} from './style'
 
 const logo = 'https://i.imgur.com/f1NfVRM.png'
@@ -86,7 +87,7 @@ const rightCreateMessageButton = {
 }
 
 const rightMoreOptionsButton = {
-  rightButtonImage: MoreIcon,
+  rightButtonImage: InfoIcon,
   rightButtonIconStyle: style.icon,
   onRight: () => Actions.moreOptionsRightButton()
 }

@@ -3,6 +3,18 @@ import {Actions} from 'react-native-router-flux'
 import {saveLoginStateToLocalStorage} from './localStorage'
 import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage} from './firebase'
 
+const removeConvoAction = async props => {
+  return new Promise( async (resolve, reject) => {
+    Actions.modal({
+      header: 'Pending',
+      message: 'Are you sure you want to remove this convo?',
+      onComplete: () => { resolve() },
+      onFail: () => { reject() }
+    })
+  })
+}
+export {removeConvoAction}
+
 const genericError = async props => {
   return new Promise( async (resolve, reject) => {
     Actions.modal({
