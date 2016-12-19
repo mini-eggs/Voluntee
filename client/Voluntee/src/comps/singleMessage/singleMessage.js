@@ -22,7 +22,7 @@ const goToCreateMessageComp = props => {
 
   if(user.userEmail === Actions.user.email) {
 
-    let user = {
+    user = {
       userDisplayName: item.fromUserDisplayName,
       userEmail: item.fromUserEmail,
       userPhoto: item.fromUserPhoto,
@@ -41,6 +41,10 @@ const goToCreateMessageComp = props => {
 }
 
 const style = {
+  AllMessagesContainer: {
+    paddingTop:10,
+    paddingBottom:10
+  },
   BubbleTextWrap:{
     backgroundColor:lightGreen,
     padding:5,
@@ -54,7 +58,8 @@ const style = {
   Background:{
     backgroundColor:defaultBackgroundColor,
     minHeight: screenArea,
-    flex:1
+    paddingTop:10,
+    paddingBottom:10
   },
   TextBubble:{
   },
@@ -123,6 +128,12 @@ class SingleMessageComp extends React.Component {
     }
   }
 
+  componentWillReceiveProps() {
+
+    this.loadCommentThread()
+
+  }
+
   async componentDidMount() {
     if(!Actions.user) 
       notLoggedIn()
@@ -154,9 +165,7 @@ class SingleMessageComp extends React.Component {
             :
             <View>
               <MessageListComp list={this.state.messages} />
-              <View
-                style={{marginTop: ( -1 * buttonHeight )}}
-              />
+              <View style={{marginTop: ( -1 * buttonHeight )}} />
               <Button 
                 onPress={ () => { goToCreateMessageComp({item:this.state.item, key:this.state.key}) } }
                 text='New Message'

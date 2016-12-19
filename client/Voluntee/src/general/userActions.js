@@ -56,7 +56,8 @@ const createMessageAction = async props => {
 		message.catch(err => {
 			Actions.modal({
 				header: 'Error',
-				message: 'Oops, something went wrong'
+				message: 'Oops, something went wrong',
+        onComplete: () => { reject() }
 			})
 		})
 	})

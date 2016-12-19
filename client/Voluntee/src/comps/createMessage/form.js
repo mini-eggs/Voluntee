@@ -85,7 +85,9 @@ class CreateForm extends React.Component {
     if(this.state.commentKey) {
       messageData.commentKey = this.state.commentKey
     }
-    createMessageAction(messageData)
+    
+    const message = createMessageAction(messageData)
+    message.catch(() => this.setState({loading:false}))
 
   }
 

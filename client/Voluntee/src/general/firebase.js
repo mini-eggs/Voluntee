@@ -51,6 +51,7 @@ const getMessageThreadFromKey = async props => {
         data = ObjToArr({obj:data})
         data = fixArrWithKey({arr:data})
         data = orderArrBy({arr:data, key:'descDate'})
+        data = data.reverse()
         resolve(data)
       }
     })
@@ -118,12 +119,34 @@ const getMessageParentForUser = async props => {
 }
 export {getMessageParentForUser}
 
-const createMessage = async props => {
+// internal
+const addThreadMessage = async props => {
+  return new Promise( async (resolve, reject) => {
+    try {
+      const commentKey = props.commentKey
+      delete props.commentKey
+      const parentUpdate = {}
+      parentUpdate[`/messagesParent/${commentKey}`] = props
+      const parentRow = firebase.database().ref().update(parentUpdate)
+      props.messagesParent = commentKey 
+      const messageKey = firebase.database().ref().child('messages').push().key
+      const updates = {}
+      updates[`/messages/${messageKey}`] = props
+      const row = firebase.database().ref().update(updates)
+      resolve([parentRow, row])
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log('Error in addThreadMessage within firebase.js. Error below.')
+        console.log(err)
+      }
+      reject(err)
+    }
+  })
+}
 
-  // TODO
-  // create comment within same
-  // thread if commentKey exists
-
+// internal 
+const createNewMessage = async props => {
   return new Promise( async (resolve, reject) => {
     // create a refernce point 
     const parentKey = firebase.database().ref().child('messagesParent').push().key
@@ -137,6 +160,28 @@ const createMessage = async props => {
     updates[`/messages/${messageKey}`] = props
     const row = firebase.database().ref().update(updates)
     resolve([parentRow, row])
+  })
+}
+
+const createMessage = async props => {
+  return new Promise( async (resolve, reject) => {
+    let data
+    try {
+      if(props.commentKey) {
+        data = await addThreadMessage(props)
+      }
+      else {
+        data = await createNewMessage(props)
+      }
+      resolve(data)
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log('Error in createMessage within firebase.js. Error below:')
+        console.log(err)
+      }
+      reject(err)
+    }
   })
 }
 export {createMessage}
