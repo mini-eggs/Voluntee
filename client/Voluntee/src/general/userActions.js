@@ -3,14 +3,51 @@ import {Actions} from 'react-native-router-flux'
 import {saveLoginStateToLocalStorage} from './localStorage'
 import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage} from './firebase'
 
+// internal
+const doubleCheck = async props => {
+  const message = props.message
+  return new Promise( async (resolve, reject) => {
+    if(!message) 
+      reject('`message` props is not defined')
+    else {
+      Actions.modal({
+        header: 'Pending',
+        message: message,
+        onComplete: () => { resolve(1) },
+        onFail: () => { reject(1) }
+      })
+    }
+  })
+}
+
+const hideConvoAction = async props => {
+  return new Promise( async (resolve, reject) => {
+    try {
+      const status = await doubleCheck({message:'Are you sure you want to hide this convo?'})
+      resolve(status)
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject()
+    }
+  })
+}
+export {hideConvoAction}
+
 const removeConvoAction = async props => {
   return new Promise( async (resolve, reject) => {
-    Actions.modal({
-      header: 'Pending',
-      message: 'Are you sure you want to remove this convo?',
-      onComplete: () => { resolve() },
-      onFail: () => { reject() }
-    })
+    try {
+      const status = await doubleCheck({message:'Are you sure you want to remove this convo?'})
+      resolve(status)
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject()
+    }
   })
 }
 export {removeConvoAction}
@@ -78,46 +115,69 @@ export {createMessageAction}
 
 const reportCommentAction = async props => {
 	return new Promise( async (resolve, reject) => {
-		reportCommentByKey(props)
-			.then(data => {
-				Actions.modal({
-					header: 'Complete',
-					message: 'Comment has been reported'
-				})
-			})
-			.catch(err => {
-				Actions.modal({
-					header: 'Error',
-					message: 'Comment has already been reported',
-					onComplete:() => {}
-				})
-			})
+    try {
+      const doubleCheckStatus = await doubleCheck({message:'Are you sure you want to report this comment?'})
+      const reportCommentStatus = await reportCommentByKey(props)
+      Actions.modal({
+        header: 'Error',
+        message: 'Comment has been reported',
+        onComplete: () => { resolve() }
+      })
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      if(err === 1) {
+        reject()
+      }
+      else {
+        Actions.modal({
+          header:'Error',
+          message:'Comment has already been reported',
+          onComplete: () => { reject() }
+        })
+      }
+    }
 	})
 }
 export {reportCommentAction}
 
 const hideCommentAction = async props => {
 	return new Promise( async (resolve, reject) => {
-		const onComplete = props.onComplete
-		const data = props
-		delete data.onComplete
-		hideCommentByKeyAndUserEmail(data)
-			.then(data => {
-				Actions.modal({
-					header: 'Complete',
-					message: 'Comment has been hidden',
-					onComplete:() => {
-						if(onComplete) onComplete()
-					}
-				})
-			})
-			.catch(err => {
-				Actions.modal({
-					header: 'Error',
-					message: 'Oops, an error has occurred',
-					onComplete:() => {}
-				})
-			})
+    try {
+      // setting data
+      const onComplete = props.onComplete
+      const data = props
+      delete data.onComplete
+      // double check
+      // and do action
+      const doubleCheckStatus = await doubleCheck({message:'Are you sure you want to hide this comment?'})
+      const hideCommentStatus = await hideCommentByKeyAndUserEmail(data)
+      Actions.modal({
+        header: 'Complete',
+        message: 'Comment has been hidden',
+        onComplete:() => {
+          if(onComplete) {
+            onComplete()
+          }
+          resolve()
+        }
+      })
+    }
+    // this could be a cancel
+    // or an actual error
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      if(err === 1) {
+        reject()
+      }
+      else {
+        genericError().then(() => { reject() })
+      }
+    }
 	})
 }
 export {hideCommentAction}
@@ -147,27 +207,42 @@ export {removeCommentByKeyAction}
 
 const blockUserAction = async props => {
 	return new Promise( async (resolve, reject) => {
-		const onComplete = props.onComplete
-		const data = props
-		delete data.onComplete
-		blockUser(data)
-			.then(data => {
-				Actions.modal({
-					header: 'Complete',
-					message: `${props.userBlockedDisplayName} has been blocked`,
-					onComplete:() => {
-						if(onComplete) onComplete()
-					}
-				})
-			})
-			.catch(err => {
-				console.log(err)
-				Actions.modal({
-					header: 'Error',
-					message: `${props.userBlockedDisplayName} has already been blocked`,
-					onComplete:() => {}
-				})
-			})
+
+    const onComplete = props.onComplete
+    const data = props
+    delete data.onComplete
+
+    try {
+
+      const doubleCheckStatus = await doubleCheck({message: `Are you sure you want to block ${props.userBlockedDisplayName}?`})
+      const blockUserStatus = blockUser(data)
+
+      blockUserStatus.then(data => {
+        Actions.modal({
+          header: 'Complete',
+          message: `${props.userBlockedDisplayName} has been blocked`,
+          onComplete:() => {if(onComplete) onComplete()}
+        })
+      })
+
+      blockUserStatus.catch(err => {
+        if(__DEV__) {
+          console.log(err)
+        }
+        Actions.modal({
+          header: 'Error',
+          message: `${props.userBlockedDisplayName} has already been blocked`,
+          onComplete: () => {}
+        })
+      })
+    }
+
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject(err)
+    }
 	})
 }
 export {blockUserAction}

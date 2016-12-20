@@ -8,7 +8,7 @@ import {Loader} from '../loader/loader'
 import Base from '../base/base'
 import {getMessageParentForUser} from '../../general/firebase'
 import {darkGreen} from '../../general/general'
-import {notLoggedIn} from '../../general/userActions'
+import {notLoggedIn, genericError} from '../../general/userActions'
 
 const defaultStartingState = {
   loading: true,
@@ -85,13 +85,15 @@ class MessageComp extends React.Component {
 
     try {
       
-      const messages = await getMessageParentForUser(messageData)
-      console.log(messages)
-      // todo
-      // set descDate by last
-      // item in messages
-      // for pages
-      this.setState({loading:false, morePages:messages.morePages, messages:messages.items, loadingNextPage: false})
+      const msgObj = await getMessageParentForUser(messageData)
+      const newMessages = [...this.state.messages, ...msgObj.items]
+      this.setState({
+        loading:false, 
+        descDate: msgObj.descDate, 
+        morePages:msgObj.morePages, 
+        messages:newMessages, 
+        loadingNextPage: false
+      })
 
     }
 
@@ -100,11 +102,7 @@ class MessageComp extends React.Component {
         console.log('error in componentWillGetMessages withing messages.js Error below:')
         console.log(err)
       }
-      Actions.modal({
-        header: 'Error',
-        message: 'Could not retreive messages at this time',
-        onComplete: () => { Actions.popRefresh() }
-      })
+      genericError()
     }
 
   }

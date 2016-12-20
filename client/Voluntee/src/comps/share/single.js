@@ -97,42 +97,42 @@ class ShareSingle extends React.Component {
 		}
 	}
 
-    componentWillReceiveProps(props) {
-        this.setState({item:props.post})
-    }
+  componentWillReceiveProps(props) {
+      this.setState({item:props.post})
+  }
 
-  	render() {
-    	return (
-    		<Base>
-                <View style={inline.Background}>
-                    <View style={UserDescCompStyle.Container}>
-                        <View style={{flexDirection:'row',justifyContent:'center'}}>
-                            <View style={{flex:0.25}}>
-                                <Image style={UserDescCompStyle.UserImage} source={{uri:this.state.item.userPhoto}} />
-                            </View>
-                            <View style={{flex:0.75}}>
-                                <View style={UserDescCompStyle.Spacer} />
-                                <Text numberOfLines={1} style={UserDescCompStyle.Text}>{this.state.item.userDisplayName}</Text>
-                                <Text numberOfLines={1} style={UserDescCompStyle.Text}>{this.state.item.userEmail}</Text>
-                            </View>
-                        </View>
-                        <View style={inline.Divider} />
-                        <View>
-                            <Text style={style.TextTitle}>
-                                {this.state.item.title}
-                            </Text>
-                            <Text style={style.Text}>
-                                {this.state.item.description}
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={{margin:10, marginTop:0}}>
-                        <CommentComp data={{ref:'posts', key:this.state.item.key}} />
-                    </View>
-                </View>
-    		</Base>
-    	)
-  	}
+  render() {
+    return (
+      <Base>
+        <View style={inline.Background}>
+          <View style={UserDescCompStyle.Container}>
+            <View style={{flexDirection:'row',justifyContent:'center'}}>
+              <View style={{flex:0.25}}>
+                <Image style={UserDescCompStyle.UserImage} source={{uri:this.state.item.userPhoto}} />
+              </View>
+              <View style={{flex:0.75}}>
+              <View style={UserDescCompStyle.Spacer} />
+                <Text numberOfLines={1} style={UserDescCompStyle.Text}>{this.state.item.userDisplayName}</Text>
+                <Text numberOfLines={1} style={UserDescCompStyle.Text}>{this.state.item.userEmail}</Text>
+              </View>
+            </View>
+            <View style={inline.Divider} />
+            <View>
+              <Text style={style.TextTitle}>
+                {this.state.item.title}
+              </Text>
+              <Text style={style.Text}>
+                {this.state.item.description}
+              </Text>
+            </View>
+          </View>
+          <View style={{margin:10, marginTop:0}}>
+            <CommentComp data={{ref:'posts', key:this.state.item.postKey}} />
+          </View>
+        </View>
+    	</Base>
+    )
+  }
 }
 
 export default ShareSingle

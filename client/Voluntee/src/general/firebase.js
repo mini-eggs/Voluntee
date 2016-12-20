@@ -27,7 +27,12 @@ const ObjToArr = props => Object.entries(props.obj)
 // object name
 const fixArrWithKey = props => props.arr.map(arr => {
   let newArr = arr[1]
-  newArr.commentKey = arr[0]
+  if(props.name) {
+    newArr[props.name] = arr[0]
+  }
+  else {
+    newArr.commentKey = arr[0]
+  }
   return newArr
 })
 
@@ -35,6 +40,38 @@ const fixArrWithKey = props => props.arr.map(arr => {
 // and return all values
 // for that key
 const orderArrBy = props => _.sortBy(props.arr, props.key)
+
+// interal
+const descDateFixArr = props => {
+  if(!props.descDate) {
+    return props.arr
+  }
+  else {
+    let data = []
+    props.arr.forEach(item => {
+      if(item.descDate > props.descDate) {
+        data.push(item)
+      }
+    })
+    return data
+  }
+}
+
+// interal
+const fixArrBySize = props => {
+  return props.arr.slice(0, props.size)
+}
+
+// internal
+const takeOutProps = props => {
+  let data = []
+  props.arr.forEach(item => {
+    if(!props.remove.includes(item[props.prop])) {
+      data.push(item)
+    }
+  })
+  return data
+}
 
 const getMessageThreadFromKey = async props => {
   // @props
@@ -82,31 +119,31 @@ const getMessgeParentByUserEmailAndProp = async props => {
 const getMessageParentForUser = async props => {
 	// @props
 	// userEmail
-	// descDate - optionsal
+	// descDate - optional
   // size
 	// @
 	return new Promise( async (resolve, reject) => {
     try {
+
+      let blockedUsers = []
+      if(Actions.user) {
+        blockedUsers = await getBlockedUsersByUserEmail({userEmail: Actions.user.email})
+      }
+
       const messagesTo = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'toUserEmail'})
       const messagesFrom = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'fromUserEmail'})
-      const messagesParent = orderArrBy({arr:messagesTo.concat(messagesFrom),key:'descDate'})
-      let items = []
-      let count = 0
-      messagesParent.forEach( (item, index) => {
-        if(count < props.size + 1) {
-          if(props.descDate) {
-            // complete
-          } else {
-            items.push(item)
-          }
-        }
-        count++
-      })
-      const morePages = items.length > props.size
-      if(morePages) {
-        items = items.splice(-1, 1)
-      }
-      resolve({items:items, morePages:morePages})
+
+      let items = [...messagesTo, ...messagesFrom]
+      items = orderArrBy({arr:items, key:'descDate'})
+      items = descDateFixArr({arr:items, descDate:props.descDate})
+      items = takeOutProps({arr:items,prop:'fromUserEmail', remove:blockedUsers})
+      items = takeOutProps({arr:items,prop:'toUserEmail', remove:blockedUsers})
+
+      const fixedSize = fixArrBySize({arr:items, size:props.size})
+      const more = fixedSize.length < items.length && fixedSize.length === props.size
+      const descDate = fixedSize[fixedSize.length - 1].descDate
+
+      resolve({items:fixedSize,morePages:more,descDate:descDate})
     }
     catch(err) {
       if(__DEV__) {
@@ -688,67 +725,38 @@ const getCommentsFromKey = async props => {
 }
 export {getCommentsFromKey}
 
-// get share wall posts via firebase
-// sort by desc date
-// also return if there are more pages available
-// for pagination reasons
 const getShareWallPostsByDescDateAndCount = async props => {
   return new Promise(async(resolve, reject) => {
-    // get all user that the current user has blocked
-    // if there is a current user
-    let blockedUsers = []
-    if(Actions.user) {
-      blockedUsers = await getBlockedUsersByUserEmail({
-        userEmail: Actions.user.email
+    try {
+      let blockedUsers = []
+      if(Actions.user) {
+        blockedUsers = await getBlockedUsersByUserEmail({userEmail: Actions.user.email})
+      }
+      const posts = firebase.database().ref('posts')
+      posts.once('value', snap => {
+        let items = snap.val()
+        if(!items) {
+          resolve({more:false, items:[]})
+        }
+        else {
+          items = ObjToArr({obj:items})
+          items = fixArrWithKey({arr:items, name:'postKey'})
+          items = orderArrBy({arr:items, key:'descDate'})
+          items = descDateFixArr({arr:items, descDate:props.descDate})
+          items = takeOutProps({arr:items,prop:'userEmail', remove:blockedUsers})
+          const fixedSize = fixArrBySize({arr:items, size:props.count})
+          const more = fixedSize.length < items.length && fixedSize.length === props.count
+          const descDate = fixedSize[fixedSize.length - 1].descDate
+          resolve({more:more,items:fixedSize,descDate:descDate})
+        }
       })
     }
-    // obtain firebase ref
-    let posts = firebase.database().ref("posts")
-      // check if we have a previous date to begin from 
-      // this is most likely the cause of pagination
-    if(props.descDate) posts = posts.orderByChild('descDate').limitToFirst(props.count + 1).startAt(props.descDate)
-      // no start location specified
-      // start from most recent share wall post
-    else posts = posts.orderByChild('descDate').limitToFirst(props.count)
-      // get share wall data fromm firebase
-      // depening on our props so far (desc start date)
-    posts.once('value', snap => {
-      let items = snap.val()
-        // fix firebase object
-      items = ObjToArr({
-          obj: items
-        })
-        // reverse because we're sorting by desc
-      items = items.reverse()
-        // only return the data
-        // we care about
-        // only the key is stored in the first object
-      items = items.map(item => {
-          item[1].key = item[0]
-          return item
-        })
-        // erase the piece of data used for pagination
-        // in determining if there are more pages
-      if(props.descDate) items.shift()
-      let lastDate = items[items.length - 1][1].descDate
-        // remove the posts created
-        // by blocked users
-      let fixedItems = []
-      items.forEach(item => {
-          if(!blockedUsers.includes(item[1].userEmail))
-            fixedItems.push(item)
-        })
-        // make sure if there are/is not more pages and return data
-      firebase.database().ref("posts").orderByChild('descDate').limitToFirst(props.count).startAt(lastDate).once("value", snap => {
-        // fixing the object once more
-        // yay firebase
-        let more = Object.keys(snap.val()).length > 1
-        resolve({
-          more: more,
-          items: fixedItems
-        })
-      })
-    })
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject()
+    }
   })
 }
 export {getShareWallPostsByDescDateAndCount}

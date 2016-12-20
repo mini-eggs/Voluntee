@@ -1,6 +1,7 @@
 import React from 'react'
 import {Text,ActivityIndicator,View,TextInput} from 'react-native'
 import {Actions} from 'react-native-router-flux'
+import * as firebase from 'firebase'
 
 import SingleListItem from '../list/list'
 import {Button} from '../button/button'
@@ -8,7 +9,7 @@ import {Loader} from '../loader/loader'
 import Base from '../base/base'
 import {getMessageThreadFromKey} from '../../general/firebase'
 import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea, buttonHeight, screenWidth} from '../../general/general'
-import {notLoggedIn, genericError, removeConvoAction} from '../../general/userActions'
+import {notLoggedIn, genericError, removeConvoAction, hideConvoAction, blockUserAction} from '../../general/userActions'
 
 const goToCreateMessageComp = props => {
 
@@ -160,17 +161,23 @@ class SingleMessageComp extends React.Component {
   userHasChosenOption(props) {
 
     const index = parseInt(props.index)
+    const item = this.state.item
 
     switch(index) {
       case 0: 
-        console.log('remove convo')
         removeConvoAction()
         break;
       case 1: 
-        console.log('hide convo')
+        hideConvoAction()
         break;
       case 2: 
-        console.log('block user')
+        const blockData = {
+          userEmail: Actions.user.email,
+          userBlocked: item.fromUserEmail === firebase.auth().currentUser.email ? item.toUserEmail : item.fromUserEmail,
+          userBlockedDisplayName: item.fromUserDisplayName === firebase.auth().currentUser.displayName ? item.toUserDisplayName : item.fromUserDisplayName,
+          onComplete: () => { Actions.popRefresh() }
+        }
+        blockUserAction(blockData)
         break;
       default:
         break;

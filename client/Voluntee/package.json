@@ -7,7 +7,8 @@
     "prep-ios": "code-push release-react Voluntee ios --plistFile \"ios/voluntee/Info.plist\" --mandatory",
     "prep-android": "code-push release-react Voluntee android --mandatory",
     "release": "code-push promote Voluntee Staging Production",
-    "history": "code-push deployment history Voluntee Production"
+    "history": "code-push deployment history Voluntee Production",
+    "lines": "cd src && git ls-files | xargs wc -l && cd .."
   },
   "dependencies": {
     "cheerio": "^0.22.0",
