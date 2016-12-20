@@ -12,6 +12,7 @@ import {notLoggedIn, genericError} from '../../general/userActions'
 
 const defaultStartingState = {
   loading: true,
+  page:0,
   loadingNextPage: false,
   morePages: false,
   messages: [],
@@ -87,13 +88,14 @@ class MessageComp extends React.Component {
       
       const msgObj = await getMessageParentForUser(messageData)
       const newMessages = [...this.state.messages, ...msgObj.items]
-      this.setState({
+      const stateData = {
         loading:false, 
         descDate: msgObj.descDate, 
         morePages:msgObj.morePages, 
         messages:newMessages, 
         loadingNextPage: false
-      })
+      }
+      this.setState(stateData, this.checkIfWeShouldDesplayUserMessage)
 
     }
 
@@ -105,6 +107,16 @@ class MessageComp extends React.Component {
       genericError()
     }
 
+  }
+
+  checkIfWeShouldDesplayUserMessage() {
+    if(this.state.messages.length === 0 && this.state.page === 0) {
+      Actions.modal({
+        header: 'Woah!',
+        message: 'You have no messages at this time',
+        onComplete: () => {}
+      })
+    }
   }
 
   componentWillLoadNextPage() {

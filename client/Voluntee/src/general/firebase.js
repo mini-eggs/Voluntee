@@ -126,8 +126,10 @@ const getMessageParentForUser = async props => {
     try {
 
       let blockedUsers = []
+      let hiddenConvos = []
       if(Actions.user) {
         blockedUsers = await getBlockedUsersByUserEmail({userEmail: Actions.user.email})
+        hiddenConvos = await getHiddenConvosByUserEmail({userEmail: Actions.user.email})
       }
 
       const messagesTo = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'toUserEmail'})
@@ -138,10 +140,11 @@ const getMessageParentForUser = async props => {
       items = descDateFixArr({arr:items, descDate:props.descDate})
       items = takeOutProps({arr:items,prop:'fromUserEmail', remove:blockedUsers})
       items = takeOutProps({arr:items,prop:'toUserEmail', remove:blockedUsers})
+      items = takeOutProps({arr:items,prop:'commentKey', remove:hiddenConvos})
 
       const fixedSize = fixArrBySize({arr:items, size:props.size})
       const more = fixedSize.length < items.length && fixedSize.length === props.size
-      const descDate = fixedSize[fixedSize.length - 1].descDate
+      const descDate = fixedSize[fixedSize.length - 1] ? fixedSize[fixedSize.length - 1].descDate : undefined
 
       resolve({items:fixedSize,morePages:more,descDate:descDate})
     }
@@ -267,6 +270,61 @@ const reportCommentByKey = async props => {
 export {reportCommentByKey}
 
 // internal
+const doReportUser = async props => {
+  return new Promise(async(resolve, reject) => {
+    const userReportedKey = firebase.database().ref().child('reportedUsers').push().key
+    const updates = {}
+    updates[`/reportedUsers/${userReportedKey}`] = props
+    const row = firebase.database().ref().update(updates)
+    resolve()
+  })
+}
+
+// internal
+const checkUserReportedStatus = async props => {
+  return new Promise( async (resolve, reject) => {
+    const reportedStatus = firebase.database().ref('reportedUsers').orderByChild('userEmail').equalTo(props.userEmail)
+    reportedStatus.once('value', snap => {
+      const data = snap.val()
+      if(data) {
+        ObjToArr({
+          obj: data
+        }).forEach(item => {
+          if(item[1].userEmail === props.userEmail && item[1].userReportedEmail === props.userReportedEmail) {
+            reject({status: 1, msg: `${props.userReportedDisplayName} has already been reported`})
+          }
+        })
+      }
+      resolve()
+    })
+  })
+}
+export {checkUserReportedStatus}
+
+const reportUserByUserEmailAndProps = async props => {
+  // @props
+  // userEmail
+  // userReportedEmail
+  // userReportedDisplayName
+  // @
+  return new Promise( async (resolve, reject) => {
+    try {
+      await checkUserReportedStatus(props)
+      await doReportUser(props)
+      resolve()
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log('Error in reportUserByUserEmailAndProps withing firebase.js. Error below:')
+        console.log(err)
+      }
+      reject(err)
+    }
+  })
+}
+export {reportUserByUserEmailAndProps}
+
+// internal
 const checkHiddenStatus = async props => {
   return new Promise(async(resolve, reject) => {
     const hiddenStatus = firebase.database().ref('hiddenComments').orderByChild('userEmail').equalTo(props.userEmail)
@@ -308,6 +366,56 @@ const hideCommentByKeyAndUserEmail = async props => {
   })
 }
 export {hideCommentByKeyAndUserEmail}
+
+// internal
+const doHideConvo = async props => {
+  return new Promise(async(resolve, reject) => {
+    const convoHiddenKey = firebase.database().ref().child('hiddenConvos').push().key
+    const updates = {}
+    updates[`/hiddenConvos/${convoHiddenKey}`] = props
+    const row = firebase.database().ref().update(updates)
+    resolve()
+  })
+}
+
+// internal
+const checkHiddenStatusOfConvo = async props => {
+  return new Promise(async(resolve, reject) => {
+    const hiddenStatus = firebase.database().ref('hiddenConvos').orderByChild('userEmail').equalTo(props.userEmail)
+    hiddenStatus.once('value', snap => {
+      const data = snap.val()
+      if(data) {
+        ObjToArr({obj: data}).forEach(item => {
+          if(item[1].userEmail === props.userEmail && item[1].key === props.key) {
+            reject({status:1, msg:'Convo has already been removed'})
+          }
+        })
+      }
+      resolve()
+    })
+  })
+}
+
+const hideConvoByKeyAndUserEmail = async props => {
+  // @props
+  // userEmail
+  // key - this is the key to the parent messsage
+  // @
+  return new Promise( async (resolve, reject) => {
+    try {
+      const status = await checkHiddenStatusOfConvo(props)
+      const hideIt = await doHideConvo(props)
+      resolve([status, hideIt])
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject(err)
+    }
+  })
+}
+export {hideConvoByKeyAndUserEmail}
 
 // removeCommentByKey
 // delete comment 
@@ -367,6 +475,22 @@ const getHiddenCommentsByUserEmail = async props => {
             return row[1].key
           })
         )
+      }
+    })
+  })
+}
+
+// internal
+const getHiddenConvosByUserEmail = async props => {
+  return new Promise(async(resolve, reject) => {
+    const hiddenConvoRows = firebase.database().ref('hiddenConvos').orderByChild('userEmail').equalTo(props.userEmail)
+    hiddenConvoRows.once('value', snap => {
+      const data = snap.val()
+      if(!data) {
+        resolve([])
+      }
+      else {
+        resolve(ObjToArr({obj: data}).map(row => row[1].key))
       }
     })
   })

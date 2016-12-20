@@ -1,7 +1,58 @@
 import {Actions} from 'react-native-router-flux'
 
 import {saveLoginStateToLocalStorage} from './localStorage'
-import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage} from './firebase'
+import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage, hideConvoByKeyAndUserEmail, reportUserByUserEmailAndProps} from './firebase'
+
+// internal
+const internalErrorHandling = async err => {
+  return new Promise( async (resolve, reject) => {
+      if(__DEV__) {
+        console.log(err)
+      }
+      if(err.status) {
+        if(err.status === 1) {
+          // custom error message has
+          // been handed to use
+          Actions.modal({
+            header: 'Error',
+            message: err.msg,
+            onComplete: () => { reject() }
+          })
+        }
+        else {
+          // this should be
+          // expanded on later
+        const genericError = await genericError()
+        reject(genericError)
+        }
+      }
+      else if(err === 1) {
+        // use cancelled action
+        reject()
+      }
+      else {
+        // who knows!!!
+        const genericError = await genericError()
+        reject(genericError)
+      }
+  })
+}
+
+// internal
+const internalSuccessHandling = async success => {
+  return new Promise( async (resolve, reject) => {
+    Actions.modal({
+      header: 'Complete',
+      message: success.msg,
+      onComplete: () => {
+        if(success.onComplete) {
+          success.onComplete()
+        }
+        resolve()
+      }
+    })
+  })
+}
 
 // internal
 const doubleCheck = async props => {
@@ -20,37 +71,64 @@ const doubleCheck = async props => {
   })
 }
 
+const reportUserAction = async props => {
+  return new Promise( async (resolve, reject) => {
+    try {
+
+      const onComplete = props.onComplete
+      const data = props
+      delete data.onComplete
+      const success = {
+        msg: `${props.userReportedDisplayName} has been repported`,
+        onComplete: () => {
+          if(onComplete) {
+            onComplete()
+          }
+          resolve()
+        }
+      }
+
+      await doubleCheck({message: `Are you sure you want to report ${props.userReportedDisplayName}?`})
+      await reportUserByUserEmailAndProps(data)
+      await internalSuccessHandling(success)
+
+    }
+    catch(err) {
+      const customError = await internalErrorHandling(err)
+      reject(customError)
+    }
+  })
+}
+export {reportUserAction}
+
 const hideConvoAction = async props => {
   return new Promise( async (resolve, reject) => {
     try {
-      const status = await doubleCheck({message:'Are you sure you want to hide this convo?'})
-      resolve(status)
+      await doubleCheck({message:'Are you sure you want to remove this convo?'})
+      // set data
+      const onComplete = props.onComplete
+      const data = props
+      delete data.onComplete
+      // hide it
+      await hideConvoByKeyAndUserEmail(data)
+      Actions.modal({
+        header: 'Complete',
+        message: 'Convo has been removed',
+        onComplete:() => {
+          if(onComplete) {
+            onComplete()
+          }
+          resolve()
+        }
+      })
     }
     catch(err) {
-      if(__DEV__) {
-        console.log(err)
-      }
-      reject()
+      const customError = await internalErrorHandling(err)
+      reject(customError)
     }
   })
 }
 export {hideConvoAction}
-
-const removeConvoAction = async props => {
-  return new Promise( async (resolve, reject) => {
-    try {
-      const status = await doubleCheck({message:'Are you sure you want to remove this convo?'})
-      resolve(status)
-    }
-    catch(err) {
-      if(__DEV__) {
-        console.log(err)
-      }
-      reject()
-    }
-  })
-}
-export {removeConvoAction}
 
 const genericError = async props => {
   return new Promise( async (resolve, reject) => {

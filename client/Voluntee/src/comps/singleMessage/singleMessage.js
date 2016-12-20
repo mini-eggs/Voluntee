@@ -9,7 +9,7 @@ import {Loader} from '../loader/loader'
 import Base from '../base/base'
 import {getMessageThreadFromKey} from '../../general/firebase'
 import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea, buttonHeight, screenWidth} from '../../general/general'
-import {notLoggedIn, genericError, removeConvoAction, hideConvoAction, blockUserAction} from '../../general/userActions'
+import {notLoggedIn, genericError, removeConvoAction, hideConvoAction, blockUserAction, reportUserAction} from '../../general/userActions'
 
 const goToCreateMessageComp = props => {
 
@@ -143,8 +143,8 @@ class SingleMessageComp extends React.Component {
   showOptions() {
 
     const options = [
+      'report user',
       'remove convo',
-      'hide convo',
       'block user',
       'dismiss'
     ]
@@ -165,10 +165,22 @@ class SingleMessageComp extends React.Component {
 
     switch(index) {
       case 0: 
-        removeConvoAction()
+        // report user
+        const reportData = {
+          userEmail: Actions.user.email,
+          userReportedEmail: item.fromUserEmail === firebase.auth().currentUser.email ? item.toUserEmail : item.fromUserEmail,
+          userReportedDisplayName: item.fromUserDisplayName === firebase.auth().currentUser.displayName ? item.toUserDisplayName : item.fromUserDisplayName,
+          onComplete: () => {}
+        }
+        reportUserAction(reportData)
         break;
       case 1: 
-        hideConvoAction()
+        const hideConvoData = {
+          key: item.commentKey,
+          userEmail: Actions.user.email,
+          onComplete: () => { Actions.popRefresh() }
+        }
+        hideConvoAction(hideConvoData)
         break;
       case 2: 
         const blockData = {

@@ -11,18 +11,20 @@ import {noInternetConnection} from '../../general/userActions'
 import Base from '../base/base'
 import ListComp from './list'
 
+const defaultStartingState = {
+  posts:[],
+  descDate:null,
+  count:10,
+  loading:false,
+  more: true
+}
+
 class Share extends React.Component {
 
 	constructor(props) {
 		super(props)
 		Actions.reloadShareComponent = props => { this.componentWillReload() }
-		this.state = {
-			posts:[],
-			descDate:null,
-			count:10,
-			loading:false,
-			more: true
-		}
+		this.state = defaultStartingState
 	}
 
 	async componentDidMount() {
@@ -55,6 +57,10 @@ class Share extends React.Component {
 	componentWillLoadNextPage() {
 		this.setState({loading:true}, this.componentWillGetPosts)
 	}
+
+  componentWillReceiveProps() {
+    this.setState(defaultStartingState, this.componentWillGetPosts)
+  }
 
   render() {
    	return (

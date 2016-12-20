@@ -77,7 +77,7 @@ class SavedEvents extends React.Component {
 
                 if(err.status === 0) {
                   Actions.modal({
-                    header: 'Error',
+                    header: 'Woah!',
                     message: err.msg,
                     onComplete: () => {}
                   })
