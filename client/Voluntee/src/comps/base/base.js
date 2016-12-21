@@ -3,6 +3,7 @@ import {Actions} from 'react-native-router-flux'
 import {View,ScrollView} from 'react-native'
 import TabBar from '../tabbar/tabbar'
 import ModalComp from '../modal/modal'
+import BadgeModalComp from '../badgeModal/badgeModal'
 import ActionSheetComp from '../actionSheet/actionSheet'
 import {actionBarHeight,tabBarHeight,lightGreen} from '../../general/general'
 
@@ -33,6 +34,7 @@ const base = props => <View style={style.container}>
 	</ScrollView>
     <ActionSheetComp/>
     <ModalComp/>
+    <BadgeModalComp/>
     <TabBar/>
 </View>
 

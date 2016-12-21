@@ -17,3 +17,6 @@ export {screenArea}
 
 const buttonHeight = 56
 export {buttonHeight}
+
+const statusbarHeight = 22
+export {statusbarHeight}

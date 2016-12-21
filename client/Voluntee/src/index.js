@@ -39,6 +39,7 @@ const checkLoginStatusThenLogin = props => {
 // Actions.ActionSheet - actionSheet.js
 // Actions.firebaseDatabase - firebase.js
 // Actions.moreOptionsRightButton - singleMessage.js
+// Actions.badgeModal - badgeModal.js
 
 /* ENABLE POP AND REFRESH */
 Actions.popRefresh = event => Actions.pop({refresh:{time:new Date().getTime()}})

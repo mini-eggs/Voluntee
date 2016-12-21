@@ -80,8 +80,8 @@ const checkBadgesAction = async props => {
     try {
       const checkBadgesWait = checkBadges({ userEmail: props.userEmail })
       const response = await checkBadgesWait
-      console.log(response)
-      resolve(response)
+      Actions.badgeModal({ badges: response })
+      resolve()
     }
     catch(err) {
       reject(err())
