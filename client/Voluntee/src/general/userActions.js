@@ -2,6 +2,7 @@ import {Actions} from 'react-native-router-flux'
 
 import {saveLoginStateToLocalStorage} from './localStorage'
 import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage, hideConvoByKeyAndUserEmail, reportUserByUserEmailAndProps} from './firebase'
+import {checkBadges} from './badges'
 
 // internal
 const internalErrorHandling = async err => {
@@ -70,6 +71,24 @@ const doubleCheck = async props => {
     }
   })
 }
+
+const checkBadgesAction = async props => {
+  // @props
+  // userEmail
+  // @
+  return new Promise ( async (resolve, reject) => {
+    try {
+      const checkBadgesWait = checkBadges({ userEmail: props.userEmail })
+      const response = await checkBadgesWait
+      console.log(response)
+      resolve(response)
+    }
+    catch(err) {
+      reject(err())
+    }
+  })
+}
+export {checkBadgesAction}
 
 const reportUserAction = async props => {
   return new Promise( async (resolve, reject) => {

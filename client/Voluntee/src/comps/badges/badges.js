@@ -1,49 +1,80 @@
 import React from 'react'
 import {Text} from 'react-native'
 import {Actions} from 'react-native-router-flux'
-import Base from '../base/base'
-import {createBadge, updateBadgeByTitle} from '../../general/firebase'
 
-const style = {
+import {Button} from '../button/button'
+import {Loader} from '../loader/loader'
+import Base from '../base/base'
+import {createBadge, updateBadgeByTitle, getBadgesByUserEmail} from '../../general/badges'
+import {checkBadgesAction} from '../../general/userActions'
+
+const initialState = {
+  loading: true,
+  earnedBadges: [],
+  notEarnedBadges: []
 }
 
 class Badges extends React.Component {
 
 	constructor(props) {
 		super(props)
-		this.state = {
-		}
+		this.state = initialState
 	}
 
 	async componentDidMount() {
-
-		// this will not live in production app
-
-		const badgeUpdates = await updateBadgeByTitle({
-			title:'test badge',
-			messsage:'updating the badge worked',
-			image: 'https://i.imgur.com/y115S41b.jpg'
-		})
-
-		console.log(badgeUpdates)
-
-		// const badge = {
-		// 	title: 'test badge',
-		// 	message: 'lorem ipsum goes here',
-		// 	image: 'https://i.imgur.com/y115S41b.jpg'
-		// }
-
-		// await createBadge(badge)
-
+    if(Actions.user) {
+      this.getBadges()
+    }
+    else {
+      Actions.modal({
+        header: 'No user',
+        message: 'Please sign in to continue',
+        onComplete: event => Actions.Account()
+      })
+    }
 	}
 
-  	render() {
-    	return (
-    		<Base>
-    			<Text>badges page</Text>
-    		</Base>
-    	)
-  	}
+  async getBadges() {
+    try {
+      const response = getBadgesByUserEmail({ userEmail: Actions.user.email })
+      console.log( await response )
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+
+  async createBadge() {
+    const badgeCreateData = {
+      title: 'test badge',
+      message: 'lorem ipsum goes here',
+      image: 'https://i.imgur.com/y115S41b.jpg',
+      order: 1,
+      type: 'savedEventsCount',
+      metric: 5
+    }
+    return await createBadge(badgeCreateData)
+  }
+
+  async checkBadges() {
+    checkBadgesAction({ userEmail: Actions.user.email })
+  }
+
+  render() {
+    return (
+    	<Base>
+        <Loader />
+        <Button 
+          text="create badge"
+          onPress={ e => this.createBadge() }
+        />
+        <Button 
+          text="check badges"
+          onPress={ e => this.checkBadges() }
+        />
+    	</Base>
+    )
+  }
 }
 
 export default Badges

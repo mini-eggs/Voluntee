@@ -119,18 +119,17 @@ class UserComp extends React.Component {
 			{state: 'commentsNum',data: {ref:'comments', type:'userEmail', email:Actions.user.email}},
 			{state: 'eventsComplete',data: {ref:'savedEvents', type:'userEmail', email:Actions.user.email}}
 		]
-		// do the iteratring
+
 		data.forEach( async data => {
-			// awaits the junks bro
+
 			try {
-				const count = await getDatabaseCategoryCountByRefAndTypeAndUserEmail(data.data)
+        const countAwait = getDatabaseCategoryCountByRefAndTypeAndUserEmail(data.data)
+				const count = await countAwait
 				const currentState = this.state
 				currentState[data.state] = count.toString()
 				this.setState(currentState)
 			}
-			// do something about errorss
-			// haven't encountered on yet
-			// but you always do 
+
 			catch(err) {
 				if(__DEV__) {
 					console.log('something went wrong componentDidMount - user.js')

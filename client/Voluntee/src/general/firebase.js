@@ -10,68 +10,7 @@ import * as _ from 'lodash'
 // don't commit these
 // see gitignore
 import {firebaseConfig} from '../keys/keys'
-
-// here's some docs
-// becuase we're new to firebase
-// https://firebase.google.com/docs/database/web/read-and-write
-
-// iterate through an obj
-// via keys and turn it into an arr
-// because firebase is still an infant
-const ObjToArr = props => Object.entries(props.obj)
-
-// put the key as a prop
-// within the second object
-// because firebase is janky
-// and likes to use keys as the
-// object name
-const fixArrWithKey = props => props.arr.map(arr => {
-  let newArr = arr[1]
-  if(props.name) {
-    newArr[props.name] = arr[0]
-  }
-  else {
-    newArr.commentKey = arr[0]
-  }
-  return newArr
-})
-
-// pass in a key
-// and return all values
-// for that key
-const orderArrBy = props => _.sortBy(props.arr, props.key)
-
-// interal
-const descDateFixArr = props => {
-  if(!props.descDate) {
-    return props.arr
-  }
-  else {
-    let data = []
-    props.arr.forEach(item => {
-      if(item.descDate > props.descDate) {
-        data.push(item)
-      }
-    })
-    return data
-  }
-}
-
-// interal
-const fixArrBySize = props => {
-  return props.arr.slice(0, props.size)
-}
-
-// internal
-const takeOutProps = props => {
-  let data = []
-  props.arr.forEach(item => {
-    if(!props.remove.includes(item[props.prop])) {
-      data.push(item)
-    }
-  })
-  return data
-}
+import {ObjToArr, fixArrWithKey, orderArrBy, descDateFixArr, fixArrBySize, takeOutProps} from './internal'
 
 const getMessageThreadFromKey = async props => {
   // @props
@@ -124,16 +63,16 @@ const getMessageParentForUser = async props => {
 	// @
 	return new Promise( async (resolve, reject) => {
     try {
+      
+      const blockedUsersWait   = getBlockedUsersByUserEmail({userEmail: props.userEmail})
+      const hiddenConvosWait   = getHiddenConvosByUserEmail({userEmail: props.userEmail})
+      const messagesToWait     = getMessgeParentByUserEmailAndProp({userEmail: props.userEmail, selectedProp:'toUserEmail'})
+      const messagesFromWait   = getMessgeParentByUserEmailAndProp({userEmail: props.userEmail, selectedProp:'fromUserEmail'})
 
-      let blockedUsers = []
-      let hiddenConvos = []
-      if(Actions.user) {
-        blockedUsers = await getBlockedUsersByUserEmail({userEmail: Actions.user.email})
-        hiddenConvos = await getHiddenConvosByUserEmail({userEmail: Actions.user.email})
-      }
-
-      const messagesTo = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'toUserEmail'})
-      const messagesFrom = await getMessgeParentByUserEmailAndProp({userEmail:props.userEmail, selectedProp:'fromUserEmail'})
+      const blockedUsers       = await blockedUsersWait
+      const hiddenConvos       = await hiddenConvosWait
+      const messagesTo         = await messagesToWait
+      const messagesFrom       = await messagesFromWait
 
       let items = [...messagesTo, ...messagesFrom]
       items = orderArrBy({arr:items, key:'descDate'})
@@ -529,84 +468,6 @@ const blockUser = async props => {
   })
 }
 export {blockUser}
-
-// update badge earned
-const updateBadgeByTitle = async props => {
-  return new Promise(async(resolve, reject) => {
-    try {
-      const ref = firebase.database().ref('badges').orderByChild('title').equalTo(props.title)
-      ref.once('value', snap => {
-        snap = snap.val()
-        if(!snap) reject(`no items found for badge of title ${props.title}`)
-        snap = ObjToArr({
-          obj: snap
-        })
-
-        // our title should be unique
-        // so just grab the first tiem
-        snap = snap[0]
-          // snag the key
-          // which is first item in the snap array
-        const key = snap[0]
-
-        // create update object
-        // push props into it
-        const updates = {}
-        updates['/badges/' + key] = props
-          // push new data into firebase
-        const row = firebase.database().ref().update(updates)
-      })
-    }
-    catch(err) {
-      if(__DEV__) {
-        console.log('There has been an error in the updateBadgeByName function withing firebase.js')
-        console.log('Error below:')
-        console.log(err)
-      }
-      reject(err)
-    }
-    resolve()
-  })
-}
-export {updateBadgeByTitle}
-
-// create badge
-// internal function
-// this will not be used by production app
-// this will end up being incorporated by
-// eventual node backend
-const createBadge = async props => {
-  // @props
-  // title
-  // message
-  // image ( this will be a URL using HTTPS )
-  // @
-  // using promises to be consumed
-  // by async/await
-  return new Promise(async(resolve, reject) => {
-    try {
-      // create firebase key
-      const key = firebase.database().ref().child('badges').push().key
-        // create update object
-        // containing new data
-      const updates = {}
-      updates['/badges/' + key] = props
-        // push new data into firebase
-      const row = firebase.database().ref().update(updates)
-    }
-    catch(err) {
-      if(__DEV__) {
-        console.log('There has been an error in the createBadge function withing firebase.js')
-        console.log('Error below:')
-        console.log(err)
-      }
-      reject(err)
-    }
-    // complete
-    resolve()
-  })
-}
-export {createBadge}
 
 // read events saved in firebase
 // via user email
