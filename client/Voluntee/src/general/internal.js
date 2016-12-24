@@ -51,7 +51,7 @@ export {takeOutProps}
 const error = props => {
   if(__DEV__) {
     console.log(`Error in ${props.function} withing ${props.file} Error below:`)
-    console.lgo(props.error)
+    console.log(props.error)
   }
   return props.error
 }

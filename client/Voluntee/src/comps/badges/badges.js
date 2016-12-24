@@ -45,13 +45,14 @@ class Badges extends React.Component {
   }
 
   async createBadge() {
+    const num = 15
     const badgeCreateData = {
-      title: 'test badge',
-      message: 'lorem ipsum goes here',
-      image: 'https://i.imgur.com/y115S41b.jpg',
-      order: 1,
+      title: `savedEventsCount - ${num}`,
+      message: `This is a test badge for saving ${num} events`,
+      image: 'https://i.imgur.com/220k4ZF.png',
+      order: 3,
       type: 'savedEventsCount',
-      metric: 5
+      metric: num
     }
     return await createBadge(badgeCreateData)
   }
@@ -64,10 +65,10 @@ class Badges extends React.Component {
     return (
     	<Base>
         <Loader />
-        <Button 
+        {/*<Button 
           text="create badge"
           onPress={ e => this.createBadge() }
-        />
+        />*/}
         <Button 
           text="check badges"
           onPress={ e => this.checkBadges() }

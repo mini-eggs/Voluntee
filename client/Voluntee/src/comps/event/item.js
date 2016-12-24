@@ -7,6 +7,7 @@ import {Loader} from '../loader/loader'
 
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue,screenWidth} from '../../general/general'
 import {saveEvent,removeEventFromSavedByKey} from '../../general/firebase'
+import {checkBadgesAction} from '../../general/userActions'
 
 const style = {
 	container:{
@@ -43,12 +44,11 @@ class SaveEventButton extends React.Component {
 		}
 	}
 
-	// save this event in the firebase 
-	// database base with user data
+
 	async saveThisEvent() {
-		// show user we're loading 
+
 		this.setState({loading:true})
-		// create data object
+
 		const milli = new Date().getTime()
 		const saveData = {
 			userEmail:Actions.user.email,
@@ -57,26 +57,25 @@ class SaveEventButton extends React.Component {
 			date:milli,
 			descDate:0-milli
 		}
-		// save the event via firebase
+
 		try {
 			await saveEvent(saveData)
 			this.setState({loading:false})
-			//show user we've done this successfully
-			Actions.changeModal({
+			Actions.modal({
 				header: 'Complete',
-				message: `${this.state.event.name} has been saved`
+				message: `${this.state.event.name} has been saved`,
+        onComplete: () => { checkBadgesAction({ userEmail: Actions.user.email }) }
 			})
-			Actions.showModal()
 		}
+
 		catch(err) {
-			//show user there was an error
 			this.setState({loading:false})
-			Actions.changeModal({
+			Actions.modal({
 				header: 'Error',
 				message: `${this.state.event.name} has already been saved`
 			})
-			Actions.showModal()
 		}
+    
 	}
 
 	// this event has previously been saved
@@ -159,8 +158,9 @@ const singleEventItem = props => {
 		/>
 	)
 
-	if(Actions.user)
+	if(Actions.user) {
 		button = <SaveEventButton event={event} />
+  }
 
 	return(
 		<View style={style.container}>

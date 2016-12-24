@@ -75,25 +75,19 @@ class badgeModal extends React.Component{
   }
 
   registerEvents() {
-    Actions.badgeModal = props => this.abstractModel(props)
-  }
-
-  async abstractModel(props) {
-    console.log(props)
-    // grant the abdge
-    // in firebase here
-    this.setState({ badges: props.badges })
+    Actions.badgeModal = props => this.setState({ badges: props.badges })
   }
 
   userClose() {
     // remove first badge
     // and wait before
     // showing the next badge
-    const badges = this.state.badges.shift()
+    const badges = this.state.badges
+    badges.shift()
     this.setState({ badges:[] }, () => {
       setTimeout( () => {
         this.setState({ badges: badges })
-      }, 2000)
+      }, 500)
     })
   }
 

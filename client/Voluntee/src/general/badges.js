@@ -43,23 +43,34 @@ const checkBadges = async props => {
       // take out the badges
       // the user has already 
       // earned
-      let badges = allBadges
-      let giveUserBadges = []
+
+      let badges = []
+
+      const badgesEarnedKeys = userBadges.earnedBadges.map( badge => badge.badgeKey)
+      allBadges.forEach( badge => {
+        if(!badgesEarnedKeys.includes(badge.badgeKey)) {
+          badges.push(badge)
+        }
+      })
       if(!(badges.length > 0)) {
         resolve([])
       }
       else {
-        badges.forEach( async (badge, index) => {
-          const badgeStatus = shouldUserHaveBadge({ badge:badge, userEmail:props.userEmail })
-          badgeStatus.then( status => {
+        const badgePromises = Promise.all(
+          badges.map( async (badge, index) =>  
+            await shouldUserHaveBadge({ badge:badge, userEmail:props.userEmail })
+          )
+        )
+        badgePromises.then(values => {
+          let giveUserBadges = []
+          values.forEach( (status, index) => {
             if(status) {
-              giveUserBadges.push(badge)
-            }
-            if(index === (badges.length - 1)) {
-              resolve(giveUserBadges)
+              giveUserBadges.push( badges[index] )
             }
           })
+          resolve( orderArrBy({arr:giveUserBadges, key:'order'}) )
         })
+        badgePromises.catch(err => reject(err))
       }
     }
     catch(err) {
@@ -156,7 +167,59 @@ const createBadge = async props => {
 }
 export {createBadge}
 
+// internal
+const checkIfUserHasBadge = async props => {
+  return new Promise( async (resolve, reject) => {
+    const status = firebase.database().ref('badgesAwarded').orderByChild('userEmail').equalTo(props.userEmail)
+    status.once('value', snap => {
+      const data = snap.val()
+      if(!data) {
+        resolve()
+      }
+      else {
+        ObjToArr({obj: data}).forEach(item => {
+          if(item[1].badgeKey === props.badgeKey) {
+            reject()
+          }
+        })
+        resolve()
+      }
+    })
+  })
+}
 
+
+// internal
+const awardBadge = async props => {
+  return new Promise( async (resolve, reject) => {
+    const badgeAwardedKey = firebase.database().ref().child('badgesAwarded').push().key
+    const update = {}
+    update[`/badgesAwarded/${badgeAwardedKey}`] = props
+    const row = firebase.database().ref().update(update)
+    resolve(row)
+  })
+}
+
+const awardBadgeByUserEmailAndBadgeKey = async props => {
+  // @props
+  // userEmail
+  // badgeKey
+  // @
+  return new Promise( async (resolve, reject) => {
+    try {
+      const status = await checkIfUserHasBadge(props)
+      const awarded = await awardBadge(props)
+      resolve(status, awarded)
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject(err)
+    }
+  })
+}
+export {awardBadgeByUserEmailAndBadgeKey}
 
 
 
