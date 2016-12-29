@@ -9,6 +9,7 @@ import {Loader} from '../loader/loader'
 
 import {createComment} from '../../general/firebase'
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
+import { checkBadgesAction } from '../../general/userActions'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
 import Base from '../base/base'
 import {style} from './style'
@@ -27,6 +28,7 @@ const inline = {
 }
 
 class FormComp extends React.Component{
+
 	constructor(props){
 		super(props)
 		this.state = {
@@ -37,6 +39,7 @@ class FormComp extends React.Component{
 			parent:props.data.parent
 		}
 	}
+
 	addComment(comment){
 		return new Promise((resolve,reject) => {
 			let milli = new Date().getTime()
@@ -54,6 +57,7 @@ class FormComp extends React.Component{
 			.catch( err => reject(err))
 		})
 	}
+
 	submitComment(){
 		this.setState({loading:true}, event => {
 			new Promise((resolve,reject) => {
@@ -70,12 +74,14 @@ class FormComp extends React.Component{
 			.then( comment => {
 				this.addComment(comment)
 					.then( data => {
-						Actions.changeModal({
+						Actions.modal({
 							header:'Complete',
 							message:'Comment has been created',
-							onComplete: () => { this.state.parent.componentWillLoadComments() }
+							onComplete: () => { 
+                checkBadgesAction({ userEmail: Actions.user.email })
+                this.state.parent.componentWillLoadComments() 
+              }
 						})
-						Actions.showModal()
 						this.clear()
 					})
 			})
@@ -89,9 +95,11 @@ class FormComp extends React.Component{
 			})
 		})
 	}
+
 	clear(){
 		this.setState({comment:"", loading:false})
 	}
+
 	error(msg){
 		this.state.parent.hideLoading()
 		Actions.changeModal({
@@ -101,12 +109,15 @@ class FormComp extends React.Component{
 		Actions.showModal()
 		this.clear()
 	}
+
 	showLoading(){
 		this.setState({loading:true})
 	}
+
 	hideLoading(){
 		this.setState({loading:false})
 	}
+
 	render(){
 		return (
 			<View>

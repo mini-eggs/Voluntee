@@ -27,21 +27,18 @@ class Share extends React.Component {
 		this.state = defaultStartingState
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
 		this.componentWillGetPosts()
 	}
 
 	async componentWillGetPosts() {
-
-    const data = {descDate:this.state.descDate,count:this.state.count}
-
     try {
+      const data = { descDate:this.state.descDate, count:this.state.count }
       const postsObj = await getShareWallPostsByDescDateAndCount(data)
       const newPostState = [...this.state.posts, ...postsObj.items]
       const newState = {posts:newPostState,descDate:postsObj.descDate, loading:false, more:postsObj.more}
       this.setState(newState)
     }
-
     catch(err) {
       if(__DEV__) {
         console.log(err)

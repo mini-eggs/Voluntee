@@ -55,12 +55,16 @@ class Items extends React.Component {
             userInputZip:null,
             page:0,
             events:[],
-            userWantsToChangeZip:false
+            userWantsToChangeZip:false,
+            noInternet: false
         }
     }
 
-    async componentDidMount(){
-        // get zip
+    componentDidMount(){
+      this.initializeSearch()
+    }
+
+    async initializeSearch() {
         try {
             const loc = await getLocation()
             const zip = await getZipFromLatAndLong({lat:loc.coords.latitude,long:loc.coords.longitude})
@@ -71,8 +75,6 @@ class Items extends React.Component {
                 console.log('Error in componentDidMount within items.js, error below: ')
                 console.log(err)
             }
-
-            // no geo location
             if(err.message === 'Location request timed out') {
               Actions.modal({
                 header: 'Error',
@@ -80,10 +82,9 @@ class Items extends React.Component {
                 onComplete: () => { this.setState({zip:'00000', loading: false, morePages:false, userWantsToChangeZip: true}) }
               })
             } 
-
-            // default / no internet
             else {
-              noInternetConnection()
+              await noInternetConnection()
+              this.setState({ loading: false, noInternet: true })
             }
         }
     }
@@ -92,7 +93,7 @@ class Items extends React.Component {
         this.setState({zip:zip},this.componentWillSearchOpportunities)
     }
 
-    componentWillSearchOpportunities(){
+    async componentWillSearchOpportunities(){
         let data = {zip:this.state.zip,page:this.state.page}
         searchOpportunities(data)
             .then( events => {
@@ -109,10 +110,10 @@ class Items extends React.Component {
     }
 
     componentWillChangeZip(zip){
-
-        if(!zip) return
-
-        if(zip.toString().length === 5 && parseInt(zip).toString() === zip.toString()) {
+        if(!zip) {
+          return false
+        }
+        else if(zip.toString().length === 5 && parseInt(zip).toString() === zip.toString()) {
             const data = {
                 userInputZip:'',
                 zip:zip,
@@ -123,7 +124,6 @@ class Items extends React.Component {
             }
             this.setState(data, this.componentWillSearchOpportunities)
         }
-
         else {
             Actions.modal({
                 header:'Error',
@@ -132,42 +132,40 @@ class Items extends React.Component {
         }
     }
 
-    // use this to decide if we 
-    // should search on input blur
     componentWillDetermineSearch() {
-        // initialize fail function
-        // this won't necessarily
-        // display to user, bc
-        // it could be invoked by a cancel
         const fail = e => this.setState({userWantsToChangeZip:false})
-        // initially check if the
-        // user input is defiend
         if(!this.state.userInputZip) {
-            fail()
-            return
+          fail()
         }
-        // the user most likely cancelled
-        // this is also invoked if the
-        // user has not entered enough
-        // characters
-        if(!(this.state.userInputZip.length == 5)) {
-            fail()
-            return
+        else if(!(this.state.userInputZip.length == 5)) {
+          fail()
         }
-        // user has entered
-        // adequate information
-        // for zip search
-        else
-            this.componentWillChangeZip(this.state.userInputZip)
+        else {
+          this.componentWillChangeZip(this.state.userInputZip)
+        }
+    }
+
+    retryWithNoInternet() {
+      this.setState({ loading: true, noInternet: false }, () => {
+        this.initializeSearch()
+      })
     }
 
   	render() {
     	return (
     		<Base>
                 {
-                    this.state.loading ?
+                    this.state.loading || this.state.noInternet ?
                         <View>
-                            <Loader/>
+                          {
+                            this.state.noInternet ? 
+                              <Button 
+                                text="reconnect" 
+                                onPress={ () => { this.retryWithNoInternet() } } 
+                              /> 
+                              : 
+                              <Loader/>
+                          }
                         </View>
                         :
                         <View>
@@ -177,9 +175,6 @@ class Items extends React.Component {
                                     :
                                     <View>
                                         <Container>
-                                            {/*<ColThree>
-                                                <Button raised primary text="cancel" onPress={ e => { this.setState({userWantsToChangeZip:false}) }} />
-                                            </ColThree>*/}
                                             <ColSix>
                                                 <TextInput
                                                     style={style.TextInput}

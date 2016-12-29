@@ -173,7 +173,7 @@ const notLoggedIn = async props => {
     Actions.modal({
       header: 'No user',
       message: 'Please sign in to continue',
-      onComplete: event => Actions.Account()
+      onComplete: Actions.Account
     })
   })
 }
@@ -184,7 +184,7 @@ const noInternetConnection = async props => {
     Actions.modal({
       header: 'Error',
       message: 'No internect connection can be established',
-      onComplete: () => {}
+      onComplete: resolve
     })
   })
 }

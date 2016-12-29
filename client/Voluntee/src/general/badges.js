@@ -6,24 +6,43 @@ import {ObjToArr, fixArrWithKey, orderArrBy, descDateFixArr, fixArrBySize, takeO
 import {getDatabaseCategoryCountByRefAndTypeAndUserEmail} from './firebase'
 
 const shouldUserHaveBadge = async props => {
+
   // @props
   // badge
   // userEmail
   // @
+  
   return new Promise( async (resolve, reject) => {
-    let status = false
+
+    let data, response, status
+
     switch(props.badge.type) {
 
       case 'savedEventsCount':
-        const data = { ref: 'savedEvents', type: 'userEmail', email: props.userEmail }
-        const response = await getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
+        data = { ref: 'savedEvents', type: 'userEmail', email: props.userEmail }
+        response = await getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
+        status = parseInt(response) >= parseInt(props.badge.metric)
+        break;
+
+      case 'commentsCount':
+        data = { ref: 'comments', type:'userEmail', email: props.userEmail }
+        response = await getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
+        status = parseInt(response) >= parseInt(props.badge.metric)
+        break;
+
+      case 'postsCount':
+        data = { ref: 'posts', type:'userEmail', email: props.userEmail }
+        response = await getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
         status = parseInt(response) >= parseInt(props.badge.metric)
         break;
 
       default:
+        status = false
         break;
     }
+
     resolve(status)
+
   })
 }
 
@@ -35,6 +54,7 @@ const checkBadges = async props => {
   // need to be awarded to 
   // the user
   return new Promise( async (resolve, reject) => {
+
     try {
       const allBadgesWait    = getAllBadges()
       const userBadgesWait   = getBadgesByUserEmail({ userEmail: props.userEmail })
@@ -56,11 +76,13 @@ const checkBadges = async props => {
         resolve([])
       }
       else {
+
         const badgePromises = Promise.all(
           badges.map( async (badge, index) =>  
             await shouldUserHaveBadge({ badge:badge, userEmail:props.userEmail })
           )
         )
+
         badgePromises.then(values => {
           let giveUserBadges = []
           values.forEach( (status, index) => {
@@ -70,9 +92,11 @@ const checkBadges = async props => {
           })
           resolve( orderArrBy({arr:giveUserBadges, key:'order'}) )
         })
+
         badgePromises.catch(err => reject(err))
       }
     }
+
     catch(err) {
       reject( error({function:'checkBadges', file:'badges.js', error:err}) )
     }
@@ -81,31 +105,42 @@ const checkBadges = async props => {
 export {checkBadges}
 
 const getBadgesByUserEmail = async props => {
+
   // @props
   // userEmail
   // @
   // return badges the 
   // user has obtained
+
   return new Promise( async (resolve, reject) => {
+
     try {
+
       const badges = firebase.database().ref('badgesAwarded').orderByChild('userEmail').equalTo(props.userEmail)
+      const allBadges = await getAllBadges()
+
       badges.once('value', async snap => {
+
         const data = snap.val()
+
         if(!data) {
-          resolve({ earnedBadges: [], notEarnedBadges: await getAllBadges() })
+          resolve({ earnedBadges: [], allBadges: allBadges })
         }
+
         else {
           let items
           items = ObjToArr({obj:data})
           items = fixArrWithKey({arr:items, name:'awardedBadgeKey'})
-
-          resolve({ earnedBadges: items, notEarnedBadges: await getAllBadges() })
+          resolve({ earnedBadges: items, allBadges: allBadges })
         }
+
       })
     }
+
     catch(err) {
       reject( error({function:'getBadges', file:'badges.js', error:err}) )
     }
+
   })
 }
 export {getBadgesByUserEmail}

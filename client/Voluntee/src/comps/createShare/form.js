@@ -10,6 +10,7 @@ import {Loader} from '../loader/loader'
 import {Container,ColSix,Spacer,ColTwelve} from '../bootstrap/bootstrap'
 import {createSharePost} from '../../general/firebase'
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
+import { checkBadgesAction } from '../../general/userActions'
 import {style} from './style'
 
 const inline = {
@@ -44,6 +45,7 @@ const inline = {
 }
 
 class CreateForm extends React.Component {
+
 	constructor(props){
 		super(props)
 		Actions.submitSharePostRightButton = props => { this.submitShare() }
@@ -54,6 +56,7 @@ class CreateForm extends React.Component {
 			loading:false
 		}
 	}
+
 	submitShare(){
 		this.setState({loading:true}, () => {
 			new Promise((resolve,reject) => {
@@ -78,15 +81,15 @@ class CreateForm extends React.Component {
 					.then( share => {
 						this.setState({loading:false}, () => {
 							this.clear()
-							Actions.changeModal({
+							Actions.modal({
 								header:'Complete',
 								message:shareData.title + ' has been created',
 								onComplete: event => {
+                  checkBadgesAction({ userEmail: Actions.user.email })
 									Actions.reloadShareComponent()
 									Actions.pop()
 								}
 							})
-							Actions.showModal()
 						})
 					})
 			})

@@ -438,20 +438,25 @@ const getHiddenConvosByUserEmail = async props => {
 // internal
 const getBlockedUsersByUserEmail = async props => {
   return new Promise(async(resolve, reject) => {
-    const blockedRows = firebase.database().ref('blocked').orderByChild('userEmail').equalTo(props.userEmail)
-    blockedRows.once('value', snap => {
-      const data = snap.val()
-      if(!data) resolve([])
-      else {
-        resolve(
-          ObjToArr({
-            obj: data
-          }).map(row => {
-            return row[1].userBlocked
-          })
-        )
-      }
-    })
+    try {
+      const blockedRows = firebase.database().ref('blocked').orderByChild('userEmail').equalTo(props.userEmail)
+      blockedRows.once('value', snap => {
+        const data = snap.val()
+        if(!data) resolve([])
+        else {
+          resolve(
+            ObjToArr({
+              obj: data
+            }).map(row => {
+              return row[1].userBlocked
+            })
+          )
+        }
+      })
+    }
+    catch(err) {
+      reject(err)
+    }
   })
 }
 
