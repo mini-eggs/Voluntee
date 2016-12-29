@@ -1,0 +1,8 @@
+{
+  "name": "Voluntee - Android and iOS mobile app",
+  "version": "1.0.0",
+  "description": "Connect with your community today!",
+  "main": "public/index.html",
+  "author": "Evan M Jones",
+  "license": "MIT"
+}
