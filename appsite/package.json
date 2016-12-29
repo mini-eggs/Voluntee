@@ -1,8 +1,11 @@
 {
-  "name": "Voluntee - Android and iOS mobile app",
+  "name": "voluntee",
   "version": "1.0.0",
   "description": "Connect with your community today!",
   "main": "public/index.html",
   "author": "Evan M Jones",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "deploy": "firebase deploy --only hosting"
+  }
 }

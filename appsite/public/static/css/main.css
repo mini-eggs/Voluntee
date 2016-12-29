@@ -44,3 +44,6 @@ section.cta .cta-content h2 {
     text-align: left;
   }
 }
+.voluntee .screen {
+  margin: -1px -1px 0 0;
+}
