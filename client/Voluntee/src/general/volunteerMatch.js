@@ -8,6 +8,9 @@ const cheerio = require('cheerio-without-node-native')
 async function getEventFromId (props) {
     try {
         const url = `${baseUrl}${searchOrgEndpoint}${props.id}${ext}`
+        if(__DEV__) {
+          console.log(url)
+        }
         const res = await fetch(url)
         const html = await res.text()
         let $ = cheerio.load(html)
@@ -19,23 +22,28 @@ async function getEventFromId (props) {
         const desc = $(htmlBody.find('.opp_summary')[0]).text().trim()
         const skills = $($('.opp_lower_container_section ul')[0]).find('li').map((index,item) => $(item).text())
         const requirements = $($('.opp_lower_container_section ul')[1]).find('li').map((index,item) => $(item).text())
+        if(__DEV__) {
+          console.log(link)
+        }
         const orgRes = await fetch(link)
         const orgHtml = await orgRes.text()
         $ = cheerio.load(orgHtml)
         const orgHtmlBody = $('body')
+        const orgName = $(orgHtmlBody.find('.list_box_name .rwd_show')[0]).text()
         const contact = {name: $(orgHtmlBody.find('.org_contact li')[0]).text(),number: $(orgHtmlBody.find('.org_contact li')[1]).text()}
         const missionStatement = $(orgHtmlBody.find('#more_info_container section')[0]).find('p').map((index,item) => $(item).text().trim())
         
         return new Promise.resolve({
             title:title,
-            causes:causes,
+            causes:Array.from(causes),
             desc:desc,
-            skills:skills,
+            skills:Array.from(skills),
             address:props.address,
             dates:props.dates,
             contact:contact,
-            requirements:requirements,
-            missionStatement:missionStatement
+            requirements:Array.from(requirements),
+            missionStatement:Array.from(missionStatement),
+            orgName: orgName
         })
     }
     catch(err) {

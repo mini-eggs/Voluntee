@@ -17,6 +17,12 @@ const defaultPhotoConfig = {
 	maxHeight:200
 }
 
+const theme = {
+  primaryFontColor: '#000000',
+  secondaryFontColor: '#4e4e4e'
+}
+export {theme}
+
 const defaultBackgroundColor = '#ffffff'
 export {defaultBackgroundColor}
 

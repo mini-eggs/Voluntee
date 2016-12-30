@@ -5,7 +5,7 @@ import {Actions} from 'react-native-router-flux'
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
 
-import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue,screenWidth} from '../../general/general'
+import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue,screenWidth, theme} from '../../general/general'
 import {saveEvent,removeEventFromSavedByKey} from '../../general/firebase'
 import {checkBadgesAction} from '../../general/userActions'
 
@@ -16,21 +16,13 @@ const style = {
 		minHeight:screenArea,
 	},
 	header:{
-		color:'#000',
-		fontSize:22,
+		color:theme.primaryFontColor,
+		fontSize:20,
 		fontWeight:'600'
 	},
 	Text:{
-		color:'#000',
-		fontSize:12,
-	},
-	divider:{
-		backgroundColor:lightGreen,
-		height:2,
-		width:screenWidth * 0.8,
-		marginLeft: screenWidth * 0.05,
-		marginTop:10,
-		marginBottom:10
+		color:theme.secondaryFontColor,
+		fontSize:16,
 	},
 }
 
@@ -90,7 +82,7 @@ class SaveEventButton extends React.Component {
 				key:this.state.event.firebaseSavedKey
 			})
 			console.log(removeStatus)
-			Actions.changeModal({
+			Actions.modal({
                 header:'Complete',
                 message:`${this.state.event.name} has been remove from your saved list`,
                 onComplete: () => {
@@ -100,8 +92,7 @@ class SaveEventButton extends React.Component {
                 	// go directly to the discover component
                 	Actions.pop({refresh:{time:new Date().getTime()}})
                 }
-            })
-            Actions.showModal()
+      })
 		}
 		catch(err) {
 			this.setState({loading:false})
@@ -110,11 +101,10 @@ class SaveEventButton extends React.Component {
 				console.log('Details below:')
 				console.log(err)
 			}
-			Actions.changeModal({
-                header:'Error',
-                message:'Oops, something went wrong'
-            })
-            Actions.showModal()
+			Actions.modal({
+        header:'Error',
+        message:'Oops, something went wrong'
+      })
 		}
 	}
 
@@ -162,11 +152,61 @@ const singleEventItem = props => {
 		button = <SaveEventButton event={event} />
   }
 
+  console.log(fullEvent)
+
 	return(
 		<View style={style.container}>
-			<Text style={style.header}>{fullEvent.title}</Text>
-			<View style={style.divider} />
-			<Text style={style.Text}>{fullEvent.desc}</Text>
+
+
+      <Text style={style.header}>{fullEvent.title}</Text> 
+
+      <Text style={style.header}>Description</Text>
+      <Text style={style.Text}>{fullEvent.desc}</Text>
+
+      <Text style={style.header}>Skills</Text>
+      {
+        fullEvent.skills.map( (item, index) => {
+          return (
+            <Text key={index} style={style.Text}>{item}</Text>
+          )
+        })
+      }
+
+      <Text style={style.header}>Causes</Text>
+      {
+        fullEvent.causes.map( (item, index) => {
+          return (
+            <Text key={index} style={style.Text}>{item}</Text>
+          )
+        })
+      }
+
+      <Text style={style.header}>Requirements</Text>
+      {
+        fullEvent.requirements.map( (item, index) => {
+          return (
+            <Text key={index} style={style.Text}>{item}</Text>
+          )
+        })
+      }
+
+      <Text style={style.header}>Where</Text>
+      <Text style={style.Text}>{fullEvent.address.street}</Text>
+      <Text style={style.Text}>{fullEvent.address.city}{fullEvent.address.state}</Text>
+      <Text style={style.Text}>{fullEvent.address.zip}</Text>
+
+      <Text style={style.header}>Contact</Text>
+      <Text style={style.Text}>{fullEvent.contact.name}</Text>
+      <Text style={style.Text}>{fullEvent.contact.number}</Text>
+
+      <Text style={style.header}>{fullEvent.orgName}</Text>
+      {
+        fullEvent.missionStatement.map( (item, index) => {
+          return (
+            <Text key={index} style={style.Text}>{item}</Text>
+          )
+        })
+      }
 
 			<View style={{height:10}} />
 
