@@ -55,12 +55,17 @@ const style = {
   Text:{
     color:defaultTextColor
   },
+  ContainerBackground: {
+  },
   Background:{
     backgroundColor:defaultBackgroundColor,
-    minHeight: screenArea,
-    padding:5
+    minHeight: screenArea - buttonHeight,
+    padding:5,
+    paddingTop:105
   },
   TextBubble:{
+    marginBottom:100,
+    marginTop: -100
   },
   Container:{
     padding:5,
@@ -132,10 +137,6 @@ class SingleMessageComp extends React.Component {
 
   setEvents() {
 
-    // TODO
-    // add ability to remove
-    // a convo
-
     Actions.moreOptionsRightButton = props => this.showOptions()
 
   }
@@ -164,6 +165,7 @@ class SingleMessageComp extends React.Component {
     const item = this.state.item
 
     switch(index) {
+
       case 0: 
         // report user
         const reportData = {
@@ -174,6 +176,7 @@ class SingleMessageComp extends React.Component {
         }
         reportUserAction(reportData)
         break;
+
       case 1: 
         const hideConvoData = {
           key: item.commentKey,
@@ -182,6 +185,7 @@ class SingleMessageComp extends React.Component {
         }
         hideConvoAction(hideConvoData)
         break;
+
       case 2: 
         const blockData = {
           userEmail: Actions.user.email,
@@ -191,6 +195,7 @@ class SingleMessageComp extends React.Component {
         }
         blockUserAction(blockData)
         break;
+
       default:
         break;
     }
@@ -232,9 +237,8 @@ class SingleMessageComp extends React.Component {
           this.state.loading ?
             <Loader/>            
             :
-            <View>
+            <View style={style.ContainerBackground}>
               <MessageListComp list={this.state.messages} />
-              <View style={{marginTop: ( -1 * buttonHeight )}} />
               <Button 
                 onPress={ () => { goToCreateMessageComp({item:this.state.item, key:this.state.key}) } }
                 text='New Message'

@@ -4,14 +4,16 @@ import { Actions } from 'react-native-router-flux'
 import { screenArea, screenWidth, defaultBackgroundColor } from '../../general/general'
 import * as _ from 'lodash'
 
-const margin = 10
+const margin = 20
 
 const style = {
+  background: {
+    backgroundColor: defaultBackgroundColor,
+    minHeight: screenArea
+  },
   container: {
     flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'flex-start',
-    backgroundColor: defaultBackgroundColor
+    justifyContent: 'flex-start'
   },
   item: {
     height: screenArea/3 - margin * 2,
@@ -29,7 +31,7 @@ const ListComp = props => {
 
   let badges = []
   props.earnedBadges.forEach( badge => badges.push({ badge: badge, status: 'earned' }))
-  props.nonEarnedBadges.forEach( badge => badges.push({ badge: badge, status: 'nonEarned' }))
+  // props.nonEarnedBadges.forEach( badge => badges.push({ badge: badge, status: 'nonEarned' }))
 
   let columns = new Array( Math.ceil( badges.length / 2 ) ).fill(0)
   columns = columns.map( (column, index) => {
@@ -45,7 +47,7 @@ const ListComp = props => {
   })
 
   return (
-    <View>
+    <View style={style.background}>
       {
         columns.map( (column, xindex) => {
           return (
@@ -67,10 +69,11 @@ const ListComp = props => {
                   }
 
                   const attributes = item.status === 'earned' ? earnedAttributes : nonEarnedAttributes
+
                   return (
                     <TouchableHighlight underlayColor={defaultBackgroundColor} {...attributes} key={index}>
                       <Image
-                        style={style.item}  
+                        style={style.item} 
                         resizeMode="contain"
                         source={{uri: item.badge.image}}
                       />
