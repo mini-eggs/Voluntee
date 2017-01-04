@@ -111,13 +111,12 @@ class UserComp extends React.Component {
 	}
 
 	async componentDidMount() {
-		// through all the data together
-		// and iterate through to make
-		// it looks prettier in this chiccy
+    
 		const data = [
 			{state: 'shareWallPosts',data: {ref:'posts', type:'userEmail', email:Actions.user.email}},
 			{state: 'commentsNum',data: {ref:'comments', type:'userEmail', email:Actions.user.email}},
-			{state: 'eventsComplete',data: {ref:'savedEvents', type:'userEmail', email:Actions.user.email}}
+			{state: 'eventsComplete',data: {ref:'savedEvents', type:'userEmail', email:Actions.user.email}},
+      {state: 'badgesEarned',data: {ref:'badgesAwarded', type:'userEmail', email:Actions.user.email}}
 		]
 
 		data.forEach( async data => {
@@ -135,6 +134,7 @@ class UserComp extends React.Component {
 					console.log('something went wrong componentDidMount - user.js')
 				}
 			}
+
 		})
 	}
 
