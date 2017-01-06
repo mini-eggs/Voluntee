@@ -1,6 +1,7 @@
 import React from 'react'
 import {Text,View,TouchableOpacity,TextInput,Image,ActivityIndicator} from 'react-native'
 import {Actions} from 'react-native-router-flux'
+import {phonecall} from 'react-native-communications'
 
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
@@ -10,6 +11,16 @@ import {saveEvent,removeEventFromSavedByKey} from '../../general/firebase'
 import {checkBadgesAction} from '../../general/userActions'
 
 const style = {
+  MainHeaderWrap: {
+  },
+  MainHeader: {
+    color:theme.primaryFontColor,
+    fontSize:28,
+    fontWeight:'600',
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },
 	container:{
 		padding:10,
 		backgroundColor:'#fff',
@@ -18,12 +29,19 @@ const style = {
 	header:{
 		color:theme.primaryFontColor,
 		fontSize:20,
-		fontWeight:'600'
+		fontWeight:'600',
+    marginBottom: 5
 	},
 	Text:{
 		color:theme.secondaryFontColor,
 		fontSize:16,
 	},
+  Link: {
+    color: theme.linkFontColor
+  },
+  InfoBlock: {
+    marginBottom: 20
+  }
 }
 
 class SaveEventButton extends React.Component {
@@ -81,7 +99,6 @@ class SaveEventButton extends React.Component {
 			const removeStatus = await removeEventFromSavedByKey({
 				key:this.state.event.firebaseSavedKey
 			})
-			console.log(removeStatus)
 			Actions.modal({
                 header:'Complete',
                 message:`${this.state.event.name} has been remove from your saved list`,
@@ -152,65 +169,101 @@ const singleEventItem = props => {
 		button = <SaveEventButton event={event} />
   }
 
-  console.log(fullEvent)
+  const skillsBlock = 
+      <View style={style.InfoBlock}>
+        <Text style={style.header}>Skills</Text>
+        {
+          fullEvent.skills.map( (item, index) => {
+            return (
+              <Text key={index} style={style.Text}>{item}</Text>
+            )
+          })
+        }
+      </View>
+
+  const causesBlock =
+      <View style={style.InfoBlock}>
+        <Text style={style.header}>Causes</Text>
+        {
+          fullEvent.causes.map( (item, index) => {
+            return (
+              <Text key={index} style={style.Text}>{item}</Text>
+            )
+          })
+        }
+      </View>
+
+  const requirementsBlock =
+      <View style={style.InfoBlock}>
+        <Text style={style.header}>Requirements</Text>
+        {
+          fullEvent.requirements.map( (item, index) => {
+            return (
+              <Text key={index} style={style.Text}>{item}</Text>
+            )
+          })
+        }
+      </View>
 
 	return(
 		<View style={style.container}>
 
 
-      <Text style={style.header}>{fullEvent.title}</Text> 
+      <View style={style.MainHeaderWrap}>
+        <Text style={style.MainHeader}>{fullEvent.title}</Text> 
+      </View>
 
-      <Text style={style.header}>Description</Text>
-      <Text style={style.Text}>{fullEvent.desc}</Text>
+      <View style={style.InfoBlock}>
+        <Text style={style.header}>Description</Text>
+        <Text style={style.Text}>{fullEvent.desc}</Text>
+      </View>
 
-      <Text style={style.header}>Skills</Text>
       {
-        fullEvent.skills.map( (item, index) => {
-          return (
-            <Text key={index} style={style.Text}>{item}</Text>
-          )
-        })
+        fullEvent.skills.length > 0 ? skillsBlock : <View/>
       }
 
-      <Text style={style.header}>Causes</Text>
       {
-        fullEvent.causes.map( (item, index) => {
-          return (
-            <Text key={index} style={style.Text}>{item}</Text>
-          )
-        })
+        fullEvent.causes.length > 0 ? causesBlock : <View/>
       }
 
-      <Text style={style.header}>Requirements</Text>
       {
-        fullEvent.requirements.map( (item, index) => {
-          return (
-            <Text key={index} style={style.Text}>{item}</Text>
-          )
-        })
+        fullEvent.requirements.length > 0 ? requirementsBlock : <View/>
       }
 
-      <Text style={style.header}>Where</Text>
-      <Text style={style.Text}>{fullEvent.address.street}</Text>
-      <Text style={style.Text}>{fullEvent.address.city}{fullEvent.address.state}</Text>
-      <Text style={style.Text}>{fullEvent.address.zip}</Text>
+      <View style={style.InfoBlock}>
+        <Text style={style.header}>Where</Text>
+        <Text style={style.Text}>{fullEvent.address.street}</Text>
+        <Text style={style.Text}>{fullEvent.address.city}{fullEvent.address.state}</Text>
+        <Text style={style.Text}>{fullEvent.address.zip}</Text>
+      </View>
 
-      <Text style={style.header}>Contact</Text>
-      <Text style={style.Text}>{fullEvent.contact.name}</Text>
-      <Text style={style.Text}>{fullEvent.contact.number}</Text>
+      <View style={style.InfoBlock}>
+        <Text style={style.header}>Contact</Text>
+        <Text style={style.Text}>{fullEvent.contact.name}</Text>
+        <Text 
+          style={[style.Text, style.Link]}
+          onPress={ () => { phonecall(fullEvent.contact.number, true) } }
+        >
+          {fullEvent.contact.number}
+        </Text>
+      </View>
 
-      <Text style={style.header}>{fullEvent.orgName}</Text>
-      {
-        fullEvent.missionStatement.map( (item, index) => {
-          return (
-            <Text key={index} style={style.Text}>{item}</Text>
-          )
-        })
-      }
+      <View style={style.InfoBlock}>
+        <Text style={style.header}>{fullEvent.orgName}</Text>
+        {
+          fullEvent.missionStatement.map( (item, index) => {
+            return (
+              <Text key={index} style={style.Text}>{item}</Text>
+            )
+          })
+        }
+      </View>
 
-			<View style={{height:10}} />
+			<View style={{height:30}} />
 
 			{button}
+
+      <View style={{height:50}} />
 		</View>
 	)
 }

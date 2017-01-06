@@ -24,6 +24,7 @@
     "react-native": "0.39.1",
     "react-native-actionsheet": "^2.0.4",
     "react-native-code-push": "^1.16.1-beta",
+    "react-native-communications": "^2.1.4",
     "react-native-image-picker": "latest",
     "react-native-maps": "^0.11.0",
     "react-native-material-ui": "^1.4.0",

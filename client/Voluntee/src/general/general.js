@@ -19,7 +19,8 @@ const defaultPhotoConfig = {
 
 const theme = {
   primaryFontColor: '#000000',
-  secondaryFontColor: '#4e4e4e'
+  secondaryFontColor: '#4e4e4e',
+  linkFontColor: '#0000EE'
 }
 export {theme}
 

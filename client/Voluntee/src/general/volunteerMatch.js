@@ -16,6 +16,11 @@ async function getEventFromId (props) {
         let $ = cheerio.load(html)
         const htmlBody = $('body')
         const link = baseUrl + htmlBody.find('.fn.org').attr('href')
+
+        if(typeof htmlBody.find('.fn.org').attr('href') === 'undefined') {
+          return new Promise.reject({status: 0, msg: 'This event has been removed'})
+        }
+
         const title = htmlBody.find(`#${props.id}`).text()
         const org = htmlBody.find('.find.org').text()
         const causes = htmlBody.find('.cause_icon').map((index, item) => $(item).find('.sprite_profile').attr('title'))

@@ -9,7 +9,7 @@ import {Loader} from '../loader/loader'
 
 import Base from '../base/base'
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
-import {addItemToProfile,getShareWallPostsCountByUserEmail,getDatabaseCategoryCountByRefAndTypeAndUserEmail} from '../../general/firebase'
+import {addItemToProfile,getShareWallPostsCountByUserEmail,getDatabaseCategoryCountByRefAndTypeAndUserEmail, removeEventFromSavedByKey} from '../../general/firebase'
 import {getEventFromId} from '../../general/volunteerMatch'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
 import {style} from '../share/style'
@@ -169,16 +169,47 @@ class EventComponent extends React.Component {
 			if(__DEV__) console.log(err)
 			// generic somethign went wrong message
 			// figure out when this breaks
-			Actions.changeModal({
-				header:'Error',
-				message:'Oops, something went wrong'
-			})
-			Actions.showModal()
+
+      if(typeof err.status !== 'undefined') {
+        if(err.status === 0) {
+          Actions.modal({
+            header: 'Woah!',
+            message: err.msg,
+            onComplete: () => { this.eventHasBeenRemoved() }
+          })
+        }
+        else {
+          this.generalError()
+        }
+      }
+      else {
+        this.generalError()
+      }
 		}
 	}
 
-	async componentDidMount(){
-		// get the full event
+  async eventHasBeenRemoved() {
+    try {
+      const status = await removeEventFromSavedByKey({ key: this.state.event.firebaseSavedKey })
+      Actions.popRefresh()
+    }
+    catch(err) {
+      Actions.modal({
+        header:'Error',
+        message:'Oops, something went wrong',
+        onComplete: () => { Actions.popRefresh() }
+      })
+    }
+  }
+
+  generalError() {
+    Actions.modal({
+      header:'Error',
+      message:'Oops, something went wrong'
+    })
+  }
+
+	componentDidMount(){
 		this.getFullEvent()
 	}
 
