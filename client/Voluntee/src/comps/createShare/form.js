@@ -34,7 +34,8 @@ const inline = {
 		borderRadius:3,
 		margin:0,
 		padding:10,
-		borderWidth:3
+		borderWidth:3,
+    textAlignVertical: 'top'
 	},
 	Inner:{
 		margin:10
@@ -116,7 +117,8 @@ class CreateForm extends React.Component {
     			<View style={inline.Background}>
 	    			<View style={inline.Inner}>
 	    				<TextInput
-							style={inline.TextInput}
+							  style={inline.TextInput}
+                underlineColorAndroid='transparent'
 						   	onChangeText={ txt => this.setState({title:txt})}
 						  	value={this.state.title}
 						   	placeholder="title"
@@ -130,7 +132,8 @@ class CreateForm extends React.Component {
 					   	/>
 					   	<View style={inline.Divider} />
 			    		<TextInput
-						 	style={inline.TextInputMultiline}
+						 	  style={inline.TextInputMultiline}
+                underlineColorAndroid='transparent'
 						   	onChangeText={ txt => this.setState({description:txt})}
 						  	value={this.state.description}
 						   	placeholder="description"

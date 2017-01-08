@@ -1,8 +1,15 @@
 <resources>
 
     <!-- Base application theme. -->
+    <color name="custom_theme_color">#ff7373</color>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+      <item name="colorPrimary">@color/custom_theme_color</item>
+      <item name="colorPrimaryDark">@color/custom_theme_color</item>
+      <item name="colorAccent">@color/custom_theme_color</item>
+      <item name="android:statusBarColor">@color/custom_theme_color</item>
+      <item name="android:windowBackground">@color/custom_theme_color</item>
+      <item name="android:colorBackground">@color/custom_theme_color</item>s
     </style>
 
 </resources>

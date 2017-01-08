@@ -48,8 +48,8 @@ Actions.popRefresh = event => Actions.pop({refresh:{time:new Date().getTime()}})
 console.disableYellowBox = true
 
 /* INITIALIZE STATUS BAR */
-StatusBar.setBarStyle('light-content', true)
-// StatusBar.setBackgroundColor('#649c7a');
+StatusBar.setBarStyle( 'light-content', true )
+StatusBar.setBackgroundColor( lightGreen )
 
 /* INITIALIZE FIREBASE WITH ACTIONS */
 initializeFirebase()

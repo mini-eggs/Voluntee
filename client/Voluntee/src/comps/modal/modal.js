@@ -110,6 +110,7 @@ export default class extends React.Component{
 	      animationType={"fade"}
 	      transparent={true}
 	      visible={this.state.modalVisible}
+        onRequestClose={ () => {} }
 	    >
 	      <View style={style.container}>
 		      <View style={style.inner}>

@@ -123,6 +123,7 @@ class FormComp extends React.Component{
 			<View>
 				<TextInput 
 					style={inline.TextInputMultiline} 
+          underlineColorAndroid='transparent'
 					onChangeText={ txt=> this.setState({comment:txt})} 
 					value={this.state.comment} 
 					placeholder="enter comment here" 

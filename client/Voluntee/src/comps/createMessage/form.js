@@ -168,6 +168,7 @@ class CreateForm extends React.Component {
 	    		<View style={inline.Inner}>
 			   		<TextInput
 					 	  style={inline.TextInputMultiline}
+              underlineColorAndroid='transparent'
 					   	onChangeText={ txt => this.setState({message:txt})}
 					  	value={this.state.message}
 					   	placeholder="message"
