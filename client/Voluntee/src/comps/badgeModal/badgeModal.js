@@ -97,6 +97,7 @@ class badgeModal extends React.Component{
         animationType={"slide"}
         transparent={true}
         visible={this.state.badges.length > 0}
+        onRequestClose={ () => {} }
       >
        {
          this.state.badges.length > 0 ?

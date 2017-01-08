@@ -5,10 +5,12 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "prep-ios": "code-push release-react Voluntee ios --plistFile \"ios/voluntee/Info.plist\" --mandatory",
-    "prep-android": "code-push release-react Voluntee android --mandatory",
-    "release": "code-push promote Voluntee Staging Production",
+    "prep-android": "code-push release-react Voluntee-android android --mandatory",
+    "release-ios": "code-push promote Voluntee Staging Production",
+    "release-android": "code-push promote Voluntee-android Staging Production",
     "history": "code-push deployment history Voluntee Production",
-    "lines": "cd src && git ls-files | xargs wc -l && cd .."
+    "lines": "cd src && git ls-files | xargs wc -l && cd ..",
+    "build-android": "cd android && ./gradlew assembleRelease && cd .. "
   },
   "dependencies": {
     "cheerio": "^0.22.0",

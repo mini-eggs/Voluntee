@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -22,12 +21,12 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		35DDC9606BA0496686E9F7BC /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38EF5632532419984155FCA /* libCodePush.a */; };
 		496A0F0B8E4C4F78B9599D61 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1088DB8149E8460488E6C76F /* libAirMaps.a */; };
 		536A6C5C35104A38AF8F6883 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15195569D79A4B5B9DD75975 /* libRNImagePicker.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		86DB7AD15AA64778AF6F4380 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F951EB73681436C9F42C5B1 /* libz.tbd */; };
+		6B8884D8576548E1A7807078 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7C5AF23E1484E2BAAB47258 /* libCodePush.a */; };
+		1E629CE6AC27464985671382 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 76C5C968307A4F30B5654BE2 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -185,13 +184,6 @@
 			remoteGlobalIDString = 014A3B5C1C6CF33500B6D375;
 			remoteInfo = RNImagePicker;
 		};
-		DDFE69251DFCB17700774675 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A18A80C067B246CD874926D9 /* CodePush.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = CodePush;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -217,13 +209,13 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		15195569D79A4B5B9DD75975 /* libRNImagePicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImagePicker.a; sourceTree = "<group>"; };
 		1FD79E5BFB874C1EABF8F81E /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNImagePicker.xcodeproj; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; };
-		4F951EB73681436C9F42C5B1 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		A18A80C067B246CD874926D9 /* CodePush.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
-		C38EF5632532419984155FCA /* libCodePush.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libCodePush.a; sourceTree = "<group>"; };
 		ECD685F1A3F04C7EB1798BBF /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
+		C082812B82774C26973F308B /* CodePush.xcodeproj */ = {isa = PBXFileReference; name = "CodePush.xcodeproj"; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		F7C5AF23E1484E2BAAB47258 /* libCodePush.a */ = {isa = PBXFileReference; name = "libCodePush.a"; path = "libCodePush.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		76C5C968307A4F30B5654BE2 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -252,8 +244,8 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				536A6C5C35104A38AF8F6883 /* libRNImagePicker.a in Frameworks */,
 				496A0F0B8E4C4F78B9599D61 /* libAirMaps.a in Frameworks */,
-				35DDC9606BA0496686E9F7BC /* libCodePush.a in Frameworks */,
-				86DB7AD15AA64778AF6F4380 /* libz.tbd in Frameworks */,
+				6B8884D8576548E1A7807078 /* libCodePush.a in Frameworks */,
+				1E629CE6AC27464985671382 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,7 +386,7 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				1FD79E5BFB874C1EABF8F81E /* RNImagePicker.xcodeproj */,
 				ECD685F1A3F04C7EB1798BBF /* AirMaps.xcodeproj */,
-				A18A80C067B246CD874926D9 /* CodePush.xcodeproj */,
+				C082812B82774C26973F308B /* CodePush.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -433,7 +425,7 @@
 		D7BF658F90804BE59AA9725D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4F951EB73681436C9F42C5B1 /* libz.tbd */,
+				76C5C968307A4F30B5654BE2 /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -450,14 +442,6 @@
 			isa = PBXGroup;
 			children = (
 				DD2808791DFBF3D90096C0C0 /* libAirMaps.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		DDFE69211DFCB17700774675 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				DDFE69261DFCB17700774675 /* libCodePush.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -535,10 +519,6 @@
 				{
 					ProductGroup = DD2808751DFBF3D80096C0C0 /* Products */;
 					ProjectRef = ECD685F1A3F04C7EB1798BBF /* AirMaps.xcodeproj */;
-				},
-				{
-					ProductGroup = DDFE69211DFCB17700774675 /* Products */;
-					ProjectRef = A18A80C067B246CD874926D9 /* CodePush.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
@@ -743,13 +723,6 @@
 			fileType = archive.ar;
 			path = libRNImagePicker.a;
 			remoteRef = DD28089C1DFBF3D90096C0C0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		DDFE69261DFCB17700774675 /* libCodePush.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libCodePush.a;
-			remoteRef = DDFE69251DFCB17700774675 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
