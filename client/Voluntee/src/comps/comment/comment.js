@@ -4,6 +4,7 @@ import {Actions} from 'react-native-router-flux'
 import {Button,Avatar,ListItem} from 'react-native-material-ui'
 
 import {getCommentsFromKey} from '../../general/firebase'
+import {screenHeight} from '../../general/general'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
 import {style} from './style'
 import CommentList from './list'
@@ -58,7 +59,7 @@ class CommentComp extends React.Component {
 
   	render() {
     	return (
-    		<View>
+    		<View style={{ minHeight: screenHeight }}>
     			<CommentCreate data={{key:this.state.key, ref:this.state.ref, parent:this}} />
     			<View style={{height:10}} />
     			<CommentList data={{comments:this.state.comments, parent:this}} />
