@@ -10,6 +10,7 @@ import {Loader} from '../loader/loader'
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue} from '../../general/general'
 import {addItemToProfile,getShareWallPostsCountByUserEmail,getDatabaseCategoryCountByRefAndTypeAndUserEmail} from '../../general/firebase'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
+import {genericError} from '../../general/userActions'
 import {style} from './style'
 
 const circle = 50
@@ -119,23 +120,25 @@ class UserComp extends React.Component {
       {state: 'badgesEarned',data: {ref:'badgesAwarded', type:'userEmail', email:Actions.user.email}}
 		]
 
-		data.forEach( async data => {
+    const asyncArr = data.map( data => {
+      return getDatabaseCategoryCountByRefAndTypeAndUserEmail( data.data )
+    })
 
-			try {
-        const countAwait = getDatabaseCategoryCountByRefAndTypeAndUserEmail(data.data)
-				const count = await countAwait
-				const currentState = this.state
-				currentState[data.state] = count.toString()
-				this.setState(currentState)
-			}
+    try {
+      const counts = await Promise.all( asyncArr )
+      const currentState = this.state
+      counts.forEach( (count, index) => {
+        currentState[ data[index].state ] = count.toString()
+      })
+      this.setState( currentState )
+    }
 
-			catch(err) {
-				if(__DEV__) {
-					console.log('something went wrong componentDidMount - user.js')
-				}
-			}
-
-		})
+    catch(err) {
+      if(__DEV__) {
+        console.log('something went wrong componentDidMount - user.js')
+      }
+      genericError()
+    }
 	}
 
   	render() {
@@ -158,7 +161,7 @@ class UserComp extends React.Component {
   					<View style={{marginLeft:10, marginRight:10}}>
 	  					<View style={{flexDirection:'row'}}>
 	  						<View style={{flex:0.5}}>
-	  							<View style={{backgroundColor:lightGreen, padding:10, borderRadius:0, marginRight:0}}>
+	  							<View style={{backgroundColor:lightGreen, padding:10, borderRadius:0, marginRight:0, minHeight: 112}}>
 	  								<Text style={style.TextCenter}>share wall</Text>
 	  								<Text style={style.TextCenter}>posts</Text>
 	  								<View style={{height:5}}/>
@@ -171,7 +174,7 @@ class UserComp extends React.Component {
 	  							</View>
 	  						</View>
 	  						<View style={{flex:0.5}}>
-	  							<View style={{backgroundColor:lightGreen, padding:10, borderRadius:0, marginLeft:0}}>
+	  							<View style={{backgroundColor:lightGreen, padding:10, borderRadius:0, marginLeft:0, minHeight: 112}}>
 	  								<Text style={style.TextCenter}>events</Text>
 	  								<Text style={style.TextCenter}>saved</Text>
 	  								<View style={{height:5}}/>
@@ -187,7 +190,7 @@ class UserComp extends React.Component {
 
 	  					<View style={{flexDirection:'row'}}>
 	  						<View style={{flex:0.5}}>
-	  							<View style={{backgroundColor:lightGreen, padding:10, borderRadius:0, borderBottomLeftRadius:3, marginRight:0}}>
+	  							<View style={{backgroundColor:lightGreen, padding:10, borderRadius:0, borderBottomLeftRadius:3, marginRight:0, minHeight: 112}}>
 	  								<Text style={style.TextCenter}>number of</Text>
 	  								<Text style={style.TextCenter}>comments</Text>
 	  								<View style={{height:5}}/>
@@ -200,7 +203,7 @@ class UserComp extends React.Component {
 	  							</View>
 	  						</View>
 	  						<View style={{flex:0.5}}>
-	  							<View style={{backgroundColor:lightGreen, padding:10, borderRadius:0, borderBottomRightRadius:3, marginLeft:0}}>
+	  							<View style={{backgroundColor:lightGreen, padding:10, borderRadius:0, borderBottomRightRadius:3, marginLeft:0, minHeight: 112}}>
 	  								<Text style={style.TextCenter}>badges</Text>
 	  								<Text style={style.TextCenter}>earned</Text>
 	  								<View style={{height:5}}/>
@@ -225,3 +228,15 @@ class UserComp extends React.Component {
 }
 
 export default UserComp
+
+
+
+
+
+
+
+
+
+
+
+

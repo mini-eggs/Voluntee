@@ -3,6 +3,9 @@ import {Dimensions} from 'react-native'
 const actionBarHeight = 65
 export {actionBarHeight}
 
+const tabbarOffset = actionBarHeight
+export {tabbarOffset}
+
 const tabBarHeight = 50
 export {tabBarHeight}
 

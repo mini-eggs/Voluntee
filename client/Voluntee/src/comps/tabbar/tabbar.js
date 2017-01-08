@@ -2,7 +2,7 @@ import React from 'react'
 import {View,TouchableOpacity,Text,Image} from 'react-native'
 import Tabbar from 'react-native-tabbar'
 
-import {lightGreen, actionBarHeight} from '../../general/general'
+import {lightGreen, actionBarHeight, tabbarOffset} from '../../general/general'
 import {Actions} from 'react-native-router-flux'
 
 import VisibilityIcon from '../../assets/img/visibility.png'
@@ -14,7 +14,7 @@ import SettingsIcon from '../../assets/img/settings.png'
 const style = {
 	tabbies:{
 		backgroundColor:lightGreen,
-		marginTop: -1 * actionBarHeight
+    marginTop: -1 * tabbarOffset,
 	},
 	tabItem: {
     	flex: 1,

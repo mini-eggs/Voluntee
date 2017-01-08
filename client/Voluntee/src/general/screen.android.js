@@ -1,7 +1,10 @@
 import {Dimensions} from 'react-native'
 
-const actionBarHeight = 44
+const actionBarHeight = 54
 export {actionBarHeight}
+
+const tabbarOffset = 78
+export {tabbarOffset}
 
 const tabBarHeight = 50
 export {tabBarHeight}
@@ -18,5 +21,5 @@ export {screenArea}
 const buttonHeight = 56
 export {buttonHeight}
 
-const statusbarHeight = 22
+const statusbarHeight = 0
 export {statusbarHeight}

@@ -24,13 +24,14 @@ const inline = {
     borderWidth: 3
   },
   TextInputMultiline: {
-    height: 150,
+    height:100,
     fontSize: 18,
     borderColor: lightGreen,
     borderRadius: 3,
     margin: 0,
     padding: 10,
-    borderWidth: 3
+    borderWidth: 3,
+    textAlignVertical: 'top'
   },
   Inner: {
     margin: 10
@@ -166,7 +167,7 @@ class CreateForm extends React.Component {
       <View style={inline.Background}>
 	    		<View style={inline.Inner}>
 			   		<TextInput
-					 	style={inline.TextInputMultiline}
+					 	  style={inline.TextInputMultiline}
 					   	onChangeText={ txt => this.setState({message:txt})}
 					  	value={this.state.message}
 					   	placeholder="message"

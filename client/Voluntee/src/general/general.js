@@ -1,5 +1,5 @@
 import ImagePicker from 'react-native-image-picker'
-import {screenHeight, screenWidth, screenArea, actionBarHeight, tabBarHeight, buttonHeight, statusbarHeight} from './screen'
+import {screenHeight, screenWidth, screenArea, actionBarHeight, tabBarHeight, buttonHeight, statusbarHeight, tabbarOffset} from './screen'
 
 export {screenHeight}
 export {screenWidth}
@@ -8,6 +8,7 @@ export {actionBarHeight}
 export {tabBarHeight}
 export {buttonHeight}
 export {statusbarHeight}
+export {tabbarOffset}
 
 // small avi image config
 const defaultPhotoConfig = {
@@ -20,7 +21,8 @@ const defaultPhotoConfig = {
 const theme = {
   primaryFontColor: '#000000',
   secondaryFontColor: '#4e4e4e',
-  linkFontColor: '#0000EE'
+  linkFontColor: '#0000EE',
+  headerFontColor: '#cc5c5c'
 }
 export {theme}
 

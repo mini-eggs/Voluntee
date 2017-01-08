@@ -193,14 +193,15 @@ class RegisterComp extends React.Component {
   					</View>
   					<View style={{marginLeft:10,marginRight:10}}>
   						<TextInput
-							style={inline.TextInput}
-						   	onChangeText={ txt => this.setState({username:txt})}
-						  	value={this.state.username}
-						   	placeholder="username"
-						   	autoCapitalize="none"
-						   	ref="username"
-						   	autoCapitalize="none"
-							autoCorrect={false}
+							  style={inline.TextInput}
+                underlineColorAndroid='transparent'
+						    onChangeText={ txt => this.setState({username:txt})}
+							  value={this.state.username}
+				     	  placeholder="username"
+					   	  autoCapitalize="none"
+					   	  ref="username"
+					   	  autoCapitalize="none"
+							  autoCorrect={false}
 						   	autoFocus={true}
 						   	keyboardType="default"
 						   	maxLength={50}
@@ -208,13 +209,14 @@ class RegisterComp extends React.Component {
 						   	returnKeyType="next"
 					   	/>
 		    			<TextInput
-						 	style={inline.TextInput}
+						 	  style={inline.TextInput}
+                underlineColorAndroid='transparent'
 						   	onChangeText={ txt => this.setState({email:txt})}
 						  	value={this.state.email}
 						   	placeholder="email"
 						   	autoCapitalize="none"
-					        ref="email"
-							autoCapitalize="none"
+					      ref="email"
+							  autoCapitalize="none"
 						   	autoCorrect={false}
 						   	keyboardType="email-address"
 						   	maxLength={50}
@@ -222,10 +224,11 @@ class RegisterComp extends React.Component {
 						   	returnKeyType="next"
 					   	/>
 	    				<TextInput
-					        style={inline.TextInput}
-					        onChangeText={ txt => this.setState({password:txt})}
-					        value={this.state.password}
-					        placeholder="password"
+					      style={inline.TextInput}
+                underlineColorAndroid='transparent'
+					      onChangeText={ txt => this.setState({password:txt})}
+					      value={this.state.password}
+					      placeholder="password"
 						   	autoCapitalize="none"
 						    ref="password"
 						   	autoCapitalize="none"

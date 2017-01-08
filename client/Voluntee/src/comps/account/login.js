@@ -94,7 +94,8 @@ class LoginComp extends React.Component {
   				<View style={inline.Background}>
   					<View style={{margin:10}}>
   						<TextInput
-						 	style={inline.TextInput}
+						 	  style={inline.TextInput}
+                underlineColorAndroid='transparent'
 						   	onChangeText={ txt => this.setState({email:txt})}
 						  	value={this.state.email}
 						   	placeholder="email"
@@ -109,11 +110,12 @@ class LoginComp extends React.Component {
 					   	/>
 					   	<View style={{height:10}} />
     					<TextInput
-					        style={inline.TextInput}
-					        onChangeText={ txt => this.setState({password:txt})}
-					        value={this.state.password}
-					        placeholder="password"
-					        ref="password"
+					      style={inline.TextInput}
+                underlineColorAndroid='transparent'
+					      onChangeText={ txt => this.setState({password:txt})}
+					      value={this.state.password}
+					      placeholder="password"
+					      ref="password"
 						   	autoCapitalize="none"
 						   	autoCorrect={false}
 						   	keyboardType="default"

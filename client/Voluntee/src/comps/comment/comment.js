@@ -24,18 +24,22 @@ class CommentComp extends React.Component {
 		this.componentWillLoadComments()
 	}
 
-	// we dont want user to be able
-	// to click on a comment
-	// they just deleted or a comment
-	// the just hide/reported/blocked the user of
-	componentWillLoadComments(){
-		const refreshState = new Promise( async (resolve, reject) => {
-			this.setState({comments:[]}, resolve())
-		})
-		refreshState.then( () => {
-			getCommentsFromKey({key:this.state.key})
-				.then( data => this.setState({comments:data}))
-		})
+	async componentWillLoadComments(){
+    
+		// const refreshState = new Promise( async (resolve, reject) => {
+		// 	this.setState({comments:[]}, resolve())
+		// })
+		// refreshState.then( () => {
+		// 	getCommentsFromKey({key:this.state.key})
+		// 		.then( data => this.setState({comments:data}))
+		// })
+
+    // we use to set comments to an empty array
+    // to avoid users seeing comments they deleted/reported
+    // but while adding a comment it appears broken
+    // so we are not forgoing the emptying of the comments state var
+
+    this.setState({ comments: await getCommentsFromKey({ key: this.state.key }) })
 	}
 
 	// this will be hit
@@ -45,11 +49,11 @@ class CommentComp extends React.Component {
 	// are present
     componentWillReceiveProps(props) {
     	const newState = {
-			ref:props.data.ref,
-			key:props.data.key,
-			comments:[]
-		}
-        this.setState(newState, this.componentWillLoadComments)
+			  ref:props.data.ref,
+			  key:props.data.key,
+			  comments:[]
+		  }
+      this.setState(newState, this.componentWillLoadComments)
     }
 
   	render() {

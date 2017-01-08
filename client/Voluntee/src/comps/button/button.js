@@ -1,10 +1,11 @@
 import React from 'react'
 import {View,TouchableOpacity,Text,Image} from 'react-native'
-import {lightGreen, darkGreen, actionBarHeight} from '../../general/general'
+import {lightGreen, darkGreen, actionBarHeight, buttonHeight} from '../../general/general'
 
 const style = {
 	TouchableOpacity:{
 		backgroundColor:lightGreen,
+    minHeight: buttonHeight,
 		borderRadius:0,
 		paddingTop:15,
 		paddingBottom:15
