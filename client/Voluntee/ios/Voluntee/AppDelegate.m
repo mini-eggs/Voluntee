@@ -31,6 +31,7 @@
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
   rootView.backgroundColor = [UIColor colorWithRed:1.00 green:0.45 blue:0.45 alpha:1.0];
+  [[UITextField appearance] setTintColor:[UIColor colorWithRed:1.00 green:0.45 blue:0.45 alpha:1.0]];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
