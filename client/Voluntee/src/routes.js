@@ -14,6 +14,8 @@ import MapComp from './comps/map/map'
 import ShareComp from './comps/share/share'
 import SingleShareComp from './comps/share/single'
 import CreateShareComp from './comps/createShare/createShare'
+import ForgotPasswordComp from './comps/forgotPassword/forgotPassword'
+
 import MapIcon from './assets/img/map.png'
 import CreateIcon from './assets/img/create.png'
 import PlaceMapIcon from './assets/img/place.png'
@@ -97,6 +99,7 @@ const Routes = props => {
     <Router>
       <Scene key="root">
         <Scene title="Discover" key="Discover" {...leftMap} {...rightInbox} {...defaultScene} component={ItemComp} initial />
+        <Scene title="Forgot Password" key="ForgotPassword" {...defaultBackScene} component={ForgotPasswordComp} />
         <Scene title="Saved" key="Saved" {...leftMap} {...rightInbox} {...defaultScene} component={SavedComp} />
         <Scene title="Badges" key="Badges" {...rightInbox} {...defaultScene} component={BagdeComp} />
         <Scene title="Share" key="Share" {...leftCreate} {...rightInbox} {...defaultScene} component={ShareComp} />

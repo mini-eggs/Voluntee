@@ -133,8 +133,10 @@ class LoginComp extends React.Component {
   								:
   								<Button radius={true} text="login" onPress={ e => { this.login() }} />
   						}
-	  					<View style={{height:10}} />
-	  					<Button radius={true} text="register" onPress={ e => { this.state.changeStatus('register') }} />
+              <View style={{height:10}} />
+              <Button radius={true} text="forgot password" onPress={ e => { Actions.ForgotPassword() } }  />
+              <View style={{height:10}} />
+              <Button radius={true} text="register" onPress={ e => { this.state.changeStatus('register') }} />
   					</View>
   				</View>
   			</View>

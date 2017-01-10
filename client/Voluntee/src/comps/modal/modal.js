@@ -105,6 +105,10 @@ export default class extends React.Component{
   }
 
 	render(){
+
+    //  workaround for crash in UIImplementation.java
+    // if(!this.state.modalVisible) return (<View/>)
+
 		return (
 			<Modal
 	      animationType={"fade"}
