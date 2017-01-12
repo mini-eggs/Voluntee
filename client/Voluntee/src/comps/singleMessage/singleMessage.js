@@ -1,5 +1,5 @@
 import React from 'react'
-import {Text,ActivityIndicator,View,TextInput} from 'react-native'
+import {Text,ActivityIndicator,View,TextInput,Platform} from 'react-native'
 import {Actions} from 'react-native-router-flux'
 import * as firebase from 'firebase'
 
@@ -10,6 +10,8 @@ import Base from '../base/base'
 import {getMessageThreadFromKey} from '../../general/firebase'
 import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea, buttonHeight, screenWidth} from '../../general/general'
 import {notLoggedIn, genericError, removeConvoAction, hideConvoAction, blockUserAction, reportUserAction} from '../../general/userActions'
+
+const offset = Platform.OS === 'ios' ? 0 : 24
 
 const goToCreateMessageComp = props => {
 
@@ -41,37 +43,37 @@ const goToCreateMessageComp = props => {
 
 }
 
+const margin = 7
+
 const style = {
   AllMessagesContainer: {
   },
   BubbleTextWrap:{
     backgroundColor:lightGreen,
-    padding:5,
-    paddingLeft:15, 
-    paddingRight:15, 
-    borderRadius:15,
+    padding: margin,
+    paddingLeft: margin * 3, 
+    paddingRight: margin * 3, 
+    borderRadius: margin * 3,
     maxWidth: (screenWidth * 0.70)
   },
   Text:{
-    color:defaultTextColor
+    color:defaultTextColor,
+    fontSize: 16
   },
   ContainerBackground: {
   },
   Background:{
     backgroundColor:defaultBackgroundColor,
-    minHeight: screenArea - buttonHeight,
-    padding:5,
-    paddingTop:105
+    minHeight: screenArea - buttonHeight - offset ,
+    padding: margin
   },
   TextBubble:{
-    marginBottom:100,
-    marginTop: -100
   },
   Container:{
-    padding:5,
+    padding: margin,
     paddingLeft:0, 
     paddingRight:0,
-    backgroundColor:defaultBackgroundColor,
+    backgroundColor: defaultBackgroundColor,
   },
   PositionRight:{
     flexDirection:'column',

@@ -19,16 +19,19 @@ const style = {
     backgroundColor: 'rgba(0,0,0,0)'
   },
   Image: {
-    height: 100
+    height: 150,
+    margin: 50,
+    marginLeft: 0,
+    marginRight: 0
   },
   TextHeader:{
-    fontSize: 14,
+    fontSize: 16,
     textAlign: 'left',
     fontWeight:'600',
     marginBottom:7.5
   },
   Text:{
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'left',
     fontWeight:'600'
   },
@@ -51,12 +54,13 @@ const BadgeComp = props => {
           source={{ uri: props.badge.image }} 
         />
         <Text style={style.Text}>{props.badge.message}</Text>
-        <View style={{height:15}} />
-        <Button 
-          radius={true} 
-          text="DISMISS" 
-          onPress={ e => { props.onPress() } } 
-        />
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <Button 
+            radius={true} 
+            text="DISMISS" 
+            onPress={ e => { props.onPress() } } 
+          />
+        </View>
       </View>
     </View>
   )
