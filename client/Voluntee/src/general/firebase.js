@@ -264,6 +264,60 @@ const reportUserByUserEmailAndProps = async props => {
 export {reportUserByUserEmailAndProps}
 
 // internal
+const doReportPost = async props => {
+  return new Promise(async(resolve, reject) => {
+    const userReportedKey = firebase.database().ref().child('reportedPosts').push().key
+    const updates = {}
+    updates[`/reportedPosts/${userReportedKey}`] = props
+    const row = firebase.database().ref().update(updates)
+    resolve()
+  })
+}
+
+// internal
+const checkPostReportedStatus = async props => {
+  return new Promise( async (resolve, reject) => {
+    const reportedStatus = firebase.database().ref('reportedPosts').orderByChild('userEmail').equalTo(props.userEmail)
+    reportedStatus.once('value', snap => {
+      const data = snap.val()
+      if(data) {
+        ObjToArr({
+          obj: data
+        }).forEach(item => {
+          if(item[1].userEmail === props.userEmail && item[1].key === props.key) {
+            reject({status: 1, msg: `${props.title} has already been reported`})
+          }
+        })
+      }
+      resolve()
+    })
+  })
+}
+
+const reportPostByKeyAndUserEmail = props => {
+  // @props
+  // userEmail
+  // key
+  // title
+  // @
+  return new Promise( async (resolve, reject) => {
+    try {
+      await checkPostReportedStatus(props)
+      await doReportPost(props)
+      resolve()
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log('Error in reportPostByKeyAndUserEmail withing firebase.js. Error below:')
+        console.log(err)
+      }
+      reject(err)
+    }
+  })
+}
+export {reportPostByKeyAndUserEmail}
+
+// internal
 const checkHiddenStatus = async props => {
   return new Promise(async(resolve, reject) => {
     const hiddenStatus = firebase.database().ref('hiddenComments').orderByChild('userEmail').equalTo(props.userEmail)
@@ -355,6 +409,57 @@ const hideConvoByKeyAndUserEmail = async props => {
   })
 }
 export {hideConvoByKeyAndUserEmail}
+
+// internal
+const doHidePost = async props => {
+  return new Promise(async(resolve, reject) => {
+    const convoHiddenKey = firebase.database().ref().child('hiddenPosts').push().key
+    const updates = {}
+    updates[`/hiddenPosts/${convoHiddenKey}`] = props
+    const row = firebase.database().ref().update(updates)
+    resolve()
+  })
+}
+
+// internal
+const checkHiddenStatusOPost = async props => {
+  return new Promise(async(resolve, reject) => {
+    const hiddenStatus = firebase.database().ref('hiddenPosts').orderByChild('userEmail').equalTo(props.userEmail)
+    hiddenStatus.once('value', snap => {
+      const data = snap.val()
+      if(data) {
+        ObjToArr({obj: data}).forEach(item => {
+          if(item[1].userEmail === props.userEmail && item[1].key === props.key) {
+            reject({status:1, msg:`${props.title} has already been hidden`})
+          }
+        })
+      }
+      resolve()
+    })
+  })
+}
+
+const hidePostByUserEmailAndKey = props => {
+  // @props
+  // userEmail
+  // key
+  // title
+  // @
+  return new Promise( async(resolve, reject) => {
+    try {
+      const status = await checkHiddenStatusOPost(props)
+      const hideIt = await doHidePost(props)
+      resolve([status, hideIt])
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject(err)
+    }
+  })
+}
+export {hidePostByUserEmailAndKey}
 
 // removeCommentByKey
 // delete comment 
@@ -457,6 +562,26 @@ const getBlockedUsersByUserEmail = async props => {
     catch(err) {
       reject(err)
     }
+  })
+}
+
+// internal
+const getHiddenPostsByUserEmail = async props => {
+  return new Promise(async(resolve, reject) => {
+    const hiddenCommentRows = firebase.database().ref('hiddenPosts').orderByChild('userEmail').equalTo(props.userEmail)
+    hiddenCommentRows.once('value', snap => {
+      const data = snap.val()
+      if(!data) resolve([])
+      else {
+        resolve(
+          ObjToArr({
+            obj: data
+          }).map(row => {
+            return row[1].key
+          })
+        )
+      }
+    })
   })
 }
 
@@ -719,8 +844,10 @@ const getShareWallPostsByDescDateAndCount = async props => {
   return new Promise(async(resolve, reject) => {
     try {
       let blockedUsers = []
+      let hiddenPosts = []
       if(Actions.user) {
         blockedUsers = await getBlockedUsersByUserEmail({userEmail: Actions.user.email})
+        hiddenPosts = await getHiddenPostsByUserEmail({userEmail: Actions.user.email})
       }
       const posts = firebase.database().ref('posts')
       posts.once('value', snap => {
@@ -734,6 +861,7 @@ const getShareWallPostsByDescDateAndCount = async props => {
           items = orderArrBy({arr:items, key:'descDate'})
           items = descDateFixArr({arr:items, descDate:props.descDate})
           items = takeOutProps({arr:items,prop:'userEmail', remove:blockedUsers})
+          items = takeOutProps({arr:items,prop:'postKey', remove:hiddenPosts})
           const fixedSize = fixArrBySize({arr:items, size:props.count})
           const more = fixedSize.length < items.length && fixedSize.length === props.count
           const descDate = fixedSize[fixedSize.length - 1].descDate

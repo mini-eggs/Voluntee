@@ -2,6 +2,7 @@ import React from 'react'
 import {Text,View,TouchableOpacity,TextInput,Image,ActivityIndicator} from 'react-native'
 import {Actions} from 'react-native-router-flux'
 import {Avatar,ListItem} from 'react-native-material-ui'
+import * as firebase from 'firebase'
 
 import {Button} from '../button/button'
 import {Loader} from '../loader/loader'
@@ -12,6 +13,8 @@ import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto
 import Base from '../base/base'
 import {style} from './style'
 import CommentComp from '../comment/comment'
+import {blockUserAction,reportPostAction, hidePostAction} from '../../general/userActions'
+
 
 const circle = 50
 const ratio = 0.6
@@ -92,10 +95,98 @@ class ShareSingle extends React.Component {
 
 	constructor(props){
 		super(props)
+    this.registerEvents()
 		this.state = {
 			item:props.post
 		}
 	}
+
+  componentDidMount() {
+    this.registerEvents()
+  }
+
+  registerEvents() {
+    Actions.moreOptionsRightButton = () => { this.showOptions() }
+  }
+
+  showOptions() {
+
+    const options = [
+      'report post',
+      'hide post',
+      'block user',
+      'dismiss'
+    ]
+
+    Actions.ActionSheet({
+      onComplete: index => { this.userHasChosenOption({index:index}) },
+      buttons: options,
+      title: 'post options',
+      cancelIndex: 3
+    })
+
+  }
+
+  userHasChosenOption(props) {
+
+    const index = parseInt(props.index)
+    const item = this.state.item
+
+    // date: 1484030471969
+    // descDate: -1484030471969
+    // description: "Ha"
+    // postKey: "-Ka65zC6xOpxX0K86L6I"
+    // title: "Ha"
+    // userDisplayName: "bro@bro.com"
+    // userEmail: "bro@bro.com"
+    // userPhoto: "https://i.imgur.com/sfraq6D.jpg"
+
+    if(item.userEmail === Actions.user.email) {
+      Actions.modal({
+        header: 'Woah!',
+        message: `This is your share wall post, ${firebase.auth().currentUser.displayName}`
+      })
+    }
+
+    else {
+
+      switch(index) {
+
+        case 0: 
+          const reportPostData = {
+            userEmail: Actions.user.email,
+            key: item.postKey,
+            title: item.title,
+            onComplete: () => {}
+          }
+          reportPostAction(reportPostData)
+          break;
+
+        case 1: 
+          const hidePostData = {
+            userEmail: Actions.user.email,
+            key: item.postKey,
+            title: item.title,
+            onComplete: () => { Actions.popRefresh() }
+          }
+          hidePostAction(hidePostData)
+          break;
+
+        case 2: 
+          const blockData = {
+            userEmail: Actions.user.email,
+            userBlocked: item.userEmail,
+            userBlockedDisplayName: item.userDisplayName,
+            onComplete: () => { Actions.popRefresh() }
+          }
+          blockUserAction(blockData)
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
 
   componentWillReceiveProps(props) {
       this.setState({item:props.post})

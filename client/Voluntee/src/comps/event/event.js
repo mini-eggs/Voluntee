@@ -89,8 +89,8 @@ const inline = {
 
 const showMapError = props => {
 	Actions.modal({
-		header:'Error',
-		message:'This volunteer opportunity has not registered a geo location.'
+		header: 'Woah!',
+		message: 'This volunteer opportunity has not registered a geo location.'
 	})
 }
 

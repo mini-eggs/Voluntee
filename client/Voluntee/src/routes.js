@@ -104,7 +104,7 @@ const Routes = props => {
         <Scene title="Badges" key="Badges" {...rightInbox} {...defaultScene} component={BagdeComp} />
         <Scene title="Share" key="Share" {...leftCreate} {...rightInbox} {...defaultScene} component={ShareComp} />
         <Scene title="Post" key="CreateShare" {...rightCreateShareButton} {...defaultBackScene} component={CreateShareComp} />
-        <Scene title="Title Here" key="SingleShare" {...defaultBackScene} {...rightInbox} component={SingleShareComp} />
+        <Scene title="Title Here" key="SingleShare" {...defaultBackScene} {...rightMoreOptionsButton} component={SingleShareComp} />
         <Scene title="Single Event Title Here"  key="SingleEvent" {...rightPlaceMap} {...defaultBackScene} {...forceRefreshOnBack} component={EventComp} />
         <Scene title="Message" key="CreateMessage" {...rightCreateMessageButton} {...defaultBackScene} {...forceRefreshOnBack} component={CreateMessageComp} />
         <Scene title="Messages" key="MessageComp" {...defaultScene} {...defaultBackScene} {...forceRefreshOnBack} component={MessageComp} />

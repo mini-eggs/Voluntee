@@ -4,20 +4,21 @@ import { Actions } from 'react-native-router-flux'
 import { screenArea, screenWidth, defaultBackgroundColor } from '../../general/general'
 import * as _ from 'lodash'
 
-const margin = 20
+const margin = 10
 
 const style = {
   background: {
     backgroundColor: defaultBackgroundColor,
-    minHeight: screenArea
+    minHeight: screenArea,
+    padding: margin
   },
   container: {
     flexDirection: 'row',
     justifyContent: 'flex-start'
   },
   item: {
-    height: screenArea/3 - margin * 2,
-    width: screenWidth/2 - margin * 2,
+    height: screenArea/3 - margin * 3,
+    width: screenWidth/2 - margin * 3,
     margin: margin
   }
 }

@@ -1,7 +1,7 @@
 import {Actions} from 'react-native-router-flux'
 
 import {saveLoginStateToLocalStorage} from './localStorage'
-import {login,register,blockUser, removeCommentByKey, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage, hideConvoByKeyAndUserEmail, reportUserByUserEmailAndProps} from './firebase'
+import {login,register,blockUser, removeCommentByKey, hidePostByUserEmailAndKey, reportPostByKeyAndUserEmail, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage, hideConvoByKeyAndUserEmail, reportUserByUserEmailAndProps} from './firebase'
 import {checkBadges, awardBadgeByUserEmailAndBadgeKey} from './badges'
 
 // internal
@@ -128,6 +128,45 @@ const reportUserAction = async props => {
 }
 export {reportUserAction}
 
+const reportPostAction = props => {
+  // @props
+  // userEmail
+  // key
+  // title
+  // onComplete
+  // @
+  return new Promise( async (resolve, reject) => {
+
+    try {
+
+      const onComplete = props.onComplete
+      const data = props
+      delete data.onComplete
+
+      const success = {
+        msg: `${props.title} has been repported`,
+        onComplete: () => {
+          if(onComplete) {
+            onComplete()
+          }
+          resolve()
+        }
+      }
+
+      await doubleCheck({message: `Are you sure you want to report ${props.title}?`})
+      await reportPostByKeyAndUserEmail(data)
+      await internalSuccessHandling(success)
+
+    }
+
+    catch(err) {
+      const customError = await internalErrorHandling(err)
+      reject(customError)
+    }
+  })
+}
+export {reportPostAction}
+
 const hideConvoAction = async props => {
   return new Promise( async (resolve, reject) => {
     try {
@@ -156,6 +195,41 @@ const hideConvoAction = async props => {
   })
 }
 export {hideConvoAction}
+
+const hidePostAction = props => {
+  // @props
+  // userEmail
+  // key
+  // title
+  // onComplete
+  // @
+  return new Promise( async (resolve, reject) => {
+    try {
+      await doubleCheck({message: `Are you sure you want to hide ${props.title}?`})
+      // set data
+      const onComplete = props.onComplete
+      const data = props
+      delete data.onComplete
+      // hide it
+      await hidePostByUserEmailAndKey(data)
+      Actions.modal({
+        header: 'Complete',
+        message: `${props.title} has been hidden`,
+        onComplete:() => {
+          if(onComplete) {
+            onComplete()
+          }
+          resolve()
+        }
+      })
+    }
+    catch(err) {
+      const customError = await internalErrorHandling(err)
+      reject(customError)
+    }
+  })
+}
+export {hidePostAction}
 
 const genericError = async props => {
   return new Promise( async (resolve, reject) => {

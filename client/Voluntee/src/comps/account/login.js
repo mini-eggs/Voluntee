@@ -50,7 +50,6 @@ class LoginComp extends React.Component {
 		}
 	}
 	login(){
-		// this.state.parent.showLoading()
 		this.setState({loading:true}, () => {
 			new Promise((resolve,reject) => {
 				if(this.state.email && this.state.password){
@@ -63,29 +62,35 @@ class LoginComp extends React.Component {
 			.then( userData => {
 				loginUser(userData)
 					.then( user => {
-						// this.state.parent.hideLoading()
 						this.setState({loading:false}, this.state.changeStatus('account'))
 					})
 					.catch( err => {
-						this.error(err.message)
+						this.error(err)
 					})
 			})
 			.catch( err => {
-				this.error('Required parameters are not valid')
+				this.error({ message: 'Required parameters are not valid' })
 			})
 		})
 	}
 	clear(){
 		this.setState({email:null, password:null})
 	}
-	error(msg){
-		// this.state.parent.hideLoading()
+	error(err){
+    let message = err.message
+    if(typeof err.code !== 'undefined') {
+      if(err.code === 'auth/invalid-email') {
+        message = 'Check email formatting, not a valid email'
+      }
+      else if(err.code === 'auth/user-not-found') {
+        message = `No user found with email of ${this.state.email}`
+      }
+    }
 		this.setState({loading:false}, () => {
-			Actions.changeModal({
-				header:'Error',
-				message:msg
+			Actions.modal({
+				header: 'Error',
+				message: message
 			})
-			Actions.showModal()
 		})
 	}
   	render() {
