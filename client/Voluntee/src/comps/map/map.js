@@ -24,7 +24,8 @@ class MapComp extends React.Component {
       tracking: {
         latitude: props.initial.lat,
         longitude: props.initial.long
-      }
+      },
+      checkingBadges: false
     }
   }
 
@@ -65,26 +66,43 @@ class MapComp extends React.Component {
   }
 
   regionChange(region) {
-    if(Actions.user) {
-      let distance = this.getDistance( region.latitude, region.longitude, this.state.tracking.latitude, this.state.tracking.longitude )
-      distance = parseInt( distance )
-      if(distance > 0) {
-        incrementDistanceTravelledByUserEmail({ userEmail: Actions.user.email, distance: distance })
-          .then( () => {
-            checkBadgesAction({ userEmail: Actions.user.email })
-          })
-          .catch( err => {
-            if(__DEV__) {
-              console.log(err)
-            }
-          })
-        this.setState({
-          tracking: {
-            latitude: region.latitude,
-            longitude: region.longitude
-          }
+    if(Actions.user && !(this.state.checkingBadges)) {
+      this.setState({ checkingBadges: true }, () => { this.checkBadges(region) })
+    }
+  }
+
+  checkBadges(region) {
+    let distance = this.getDistance( region.latitude, region.longitude, this.state.tracking.latitude, this.state.tracking.longitude )
+    distance = parseInt( distance )
+    if(distance > 0) {
+      incrementDistanceTravelledByUserEmail({ userEmail: Actions.user.email, distance: distance })
+        .then( () => {
+          return checkBadgesAction({ userEmail: Actions.user.email })
         })
-      }
+        .then( () => {
+          this.setState({
+            tracking: {
+              latitude: region.latitude,
+              longitude: region.longitude
+            },
+            checkingBadges: false
+          })
+        })
+        .catch( err => {
+          if(__DEV__) {
+            console.log(err)
+          }
+          this.setState({
+            tracking: {
+              latitude: region.latitude,
+              longitude: region.longitude
+            },
+            checkingBadges: false
+          })
+        })
+    }
+    else {
+      this.setState({ checkingBadges: false })
     }
   }
 

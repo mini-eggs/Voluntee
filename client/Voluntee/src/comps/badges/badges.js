@@ -30,16 +30,19 @@ class Badges extends React.Component {
   async getBadges() {
     try {
       const badges = await this.getBadgesMediator()
-      this.setState({ earnedBadges: badges.earnedBadges, nonEarnedBadges: badges.nonEarnedBadges, loading:false })
-      if( !(badges.earnedBadges > 0) ) {
-        Actions.modal({
-          header: 'Woah!',
-          message: 'You have yet to earn a badge'
-        })
-      }
+      this.setState({ earnedBadges: badges.earnedBadges, nonEarnedBadges: badges.nonEarnedBadges, loading:false }, () => { this.checkAmountOfBadges() })
     }
     catch(err) {
       console.log(err)
+    }
+  }
+
+  checkAmountOfBadges() {
+    if( !(this.state.earnedBadges.length > 0) ) {
+      Actions.modal({
+        header: 'Woah!',
+        message: 'You have yet to earn a badge'
+      })
     }
   }
 

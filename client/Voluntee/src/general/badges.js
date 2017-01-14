@@ -148,7 +148,19 @@ const getBadgesByUserEmail = async props => {
           let items
           items = ObjToArr({obj:data})
           items = fixArrWithKey({arr:items, name:'awardedBadgeKey'})
-          resolve({ earnedBadges: items, allBadges: allBadges })
+          items = orderArrBy({arr:items, key:'order'})
+
+          // fixing badge order
+          let fixedOrder = []
+          allBadges.forEach( badge => {
+            items.forEach( item => {
+              if(badge.badgeKey === item.badgeKey) {
+                fixedOrder.push(item)
+              }
+            })
+          })
+
+          resolve({ earnedBadges: fixedOrder, allBadges: allBadges })
         }
 
       })
