@@ -12,6 +12,69 @@ import * as _ from 'lodash'
 import {firebaseConfig} from '../keys/keys'
 import {ObjToArr, fixArrWithKey, orderArrBy, descDateFixArr, fixArrBySize, takeOutProps} from './internal'
 
+// internal
+const checkIfUserHasDistanceTravelled = props => {
+  return new Promise( async (resolve, reject) => {
+    try {
+      const data = { ref: 'distanceTravelled', type: 'userEmail', email: props.userEmail }
+      const response = await getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
+      resolve( response )
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject(err)
+    }
+  })
+}
+
+const incrementDistanceTravelledByUserEmail = async props => {
+  // @props
+  // userEmail
+  // distance
+  // @
+  try {
+    // check if user already has data
+    const status = await checkIfUserHasDistanceTravelled(props)
+    // increment data if non zero
+    if(status === 0) {
+      const key = firebase.database().ref().child('distanceTravelled').push().key
+      const updates = {}
+      updates[`/distanceTravelled/${key}`] = props
+      firebase.database().ref().update(updates)
+    }
+    else {
+      const updateData = firebase.database().ref('distanceTravelled').orderByChild('userEmail').equalTo(props.userEmail)
+      updateData.once( 'value', snap => {
+        const data = fixArrWithKey({ arr: ObjToArr({ obj: snap.val() }), name: 'key' })
+        const previous = (data.length > 1) ? data.reduce( (x, y) => x.distance + y.distance ) : data[0].distance
+        const totalDistance = previous + props.distance
+        data.forEach( (item, index) => {
+          firebase.database().ref('distanceTravelled').child(item.key).remove(err => {
+            if(err && __DEV__) {
+              console.log(err)
+            }
+          })
+        })
+        const key = firebase.database().ref().child('distanceTravelled').push().key
+        const updates = {}
+        updates[`/distanceTravelled/${key}`] = {
+          distance: totalDistance,
+          userEmail: props.userEmail
+        }
+        firebase.database().ref().update(updates)
+      })
+    }
+  }
+  catch(err) {
+    if(__DEV__) {
+      console.log(err)
+    }
+  }
+}
+export {incrementDistanceTravelledByUserEmail}
+
 const getMessageThreadFromKey = async props => {
   // @props
   // key
