@@ -8,6 +8,7 @@ import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto
 import {blockUserAction, removeCommentByKeyAction, hideCommentAction, reportCommentAction} from '../../general/userActions'
 import {Container,ColSix,Spacer,ColTwelve,ColThree} from '../bootstrap/bootstrap'
 import {style} from './style'
+import {checkBadgesAction} from '../../general/userActions'
 
 const circle = 50
 const ratio = 0.6
@@ -82,7 +83,8 @@ const onCommentButtonPress = async props => {
 			// report comment
 			const reportedCommentData = {
 				key: props.comment.commentKey,
-				userEmail: Actions.user.email
+				userEmail: Actions.user.email,
+        onComplete: () => { checkBadgesAction({ userEmail: Actions.user.email }) }
 			}
 			reportCommentAction(reportedCommentData)
 			break;

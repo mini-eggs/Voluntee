@@ -3,7 +3,7 @@ import * as firebase from 'firebase'
 import * as _ from 'lodash'
 import {firebaseConfig} from '../keys/keys'
 import {ObjToArr, fixArrWithKey, orderArrBy, descDateFixArr, fixArrBySize, takeOutProps, error} from './internal'
-import {getDatabaseCategoryCountByRefAndTypeAndUserEmail} from './firebase'
+import {getDatabaseCategoryCountByRefAndTypeAndUserEmail, getDistanceByUserEmail} from './firebase'
 
 const shouldUserHaveBadge = async props => {
 
@@ -33,6 +33,23 @@ const shouldUserHaveBadge = async props => {
       case 'postsCount':
         data = { ref: 'posts', type:'userEmail', email: props.userEmail }
         response = await getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
+        status = parseInt(response) >= parseInt(props.badge.metric)
+        break;
+
+      case 'reportsCount':
+        data = { ref: 'reportedPosts', type:'userEmail', email: props.userEmail }
+        const rPostsReq = getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
+        data = { ref: 'reportedComments', type:'userEmail', email: props.userEmail }
+        const rCommentsReq = getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
+        data = { ref: 'reportedUser', type:'userEmail', email: props.userEmail }
+        const rUserReq = getDatabaseCategoryCountByRefAndTypeAndUserEmail(data)
+        response = parseInt(await rPostsReq) + parseInt(await rCommentsReq) + parseInt(await rUserReq)
+        status = response >= parseInt(props.badge.metric)
+        break;
+
+      case 'distanceCount':
+        data = { email: props.userEmail }
+        const response = await getDistanceByUserEmail(data)
         status = parseInt(response) >= parseInt(props.badge.metric)
         break;
 

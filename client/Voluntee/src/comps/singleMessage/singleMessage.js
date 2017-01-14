@@ -10,6 +10,7 @@ import Base from '../base/base'
 import {getMessageThreadFromKey} from '../../general/firebase'
 import {darkGreen, defaultTextColor, defaultBackgroundColor, lightGreen, screenArea, buttonHeight, screenWidth} from '../../general/general'
 import {notLoggedIn, genericError, removeConvoAction, hideConvoAction, blockUserAction, reportUserAction} from '../../general/userActions'
+import {checkBadgesAction} from '../../general/userActions'
 
 const offset = Platform.OS === 'ios' ? 0 : 24
 
@@ -174,7 +175,7 @@ class SingleMessageComp extends React.Component {
           userEmail: Actions.user.email,
           userReportedEmail: item.fromUserEmail === firebase.auth().currentUser.email ? item.toUserEmail : item.fromUserEmail,
           userReportedDisplayName: item.fromUserDisplayName === firebase.auth().currentUser.displayName ? item.toUserDisplayName : item.fromUserDisplayName,
-          onComplete: () => {}
+          onComplete: () => { checkBadgesAction({ userEmail: Actions.user.email }) }
         }
         reportUserAction(reportData)
         break;

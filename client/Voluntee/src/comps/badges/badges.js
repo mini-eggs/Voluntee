@@ -1,5 +1,5 @@
 import React from 'react'
-import {Text} from 'react-native'
+import {Text,View} from 'react-native'
 import {Actions} from 'react-native-router-flux'
 import * as _ from 'lodash'
 
@@ -31,6 +31,12 @@ class Badges extends React.Component {
     try {
       const badges = await this.getBadgesMediator()
       this.setState({ earnedBadges: badges.earnedBadges, nonEarnedBadges: badges.nonEarnedBadges, loading:false })
+      if( !(badges.earnedBadges > 0) ) {
+        Actions.modal({
+          header: 'Woah!',
+          message: 'You have yet to earn a badge'
+        })
+      }
     }
     catch(err) {
       console.log(err)
@@ -61,20 +67,16 @@ class Badges extends React.Component {
     })
   }
 
-  // async createBadge(num, order) {
+  // createBadge() {
   //   const badgeCreateData = {
-  //     title: `postsCount - ${num}`,
-  //     message: `This is a test badge for posting ${num} sharewalls`,
-  //     image: 'https://i.imgur.com/220k4ZF.png',
-  //     order: order,
-  //     type: 'postsCount',
-  //     metric: num
+  //     title: `distanceCount - 500`,
+  //     message: `This is a test badge for travelling 500 miles`,
+  //     image: 'https://i.imgur.com/eWdlmEt.png',
+  //     order: 11,
+  //     type: 'distanceCount',
+  //     metric: 500
   //   }
-  //   return await createBadge(badgeCreateData)
-  // }
-
-  // async checkBadges() {
-  //   checkBadgesAction({ userEmail: Actions.user.email })
+  //   createBadge(badgeCreateData)
   // }
 
   render() {
@@ -84,10 +86,13 @@ class Badges extends React.Component {
           this.state.loading ?
             <Loader/>
             :
-            <BadgeList 
-              earnedBadges={this.state.earnedBadges}
-              nonEarnedBadges={this.state.nonEarnedBadges}
-            />
+            this.state.earnedBadges.length > 0 ?
+              <BadgeList 
+                earnedBadges={this.state.earnedBadges}
+                nonEarnedBadges={this.state.nonEarnedBadges}
+              />
+              :
+              <View/>
         }
     	</Base>
     )

@@ -5,6 +5,7 @@ import MapView from 'react-native-maps'
 import NoScrollBase from '../base/noScroll'
 import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto,facebookBlue,screenWidth} from '../../general/general'
 import {incrementDistanceTravelledByUserEmail} from '../../general/firebase'
+import {checkBadgesAction} from '../../general/userActions'
 
 class MapComp extends React.Component {
 
@@ -69,6 +70,14 @@ class MapComp extends React.Component {
       distance = parseInt( distance )
       if(distance > 0) {
         incrementDistanceTravelledByUserEmail({ userEmail: Actions.user.email, distance: distance })
+          .then( () => {
+            checkBadgesAction({ userEmail: Actions.user.email })
+          })
+          .catch( err => {
+            if(__DEV__) {
+              console.log(err)
+            }
+          })
         this.setState({
           tracking: {
             latitude: region.latitude,

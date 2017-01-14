@@ -13,7 +13,7 @@ import {lightGreen,screenHeight,tabBarHeight,actionBarHeight,screenArea,getPhoto
 import Base from '../base/base'
 import {style} from './style'
 import CommentComp from '../comment/comment'
-import {blockUserAction,reportPostAction, hidePostAction} from '../../general/userActions'
+import {blockUserAction,reportPostAction, hidePostAction,checkBadgesAction,removePostAction,notLoggedIn} from '../../general/userActions'
 
 
 const circle = 50
@@ -117,13 +117,54 @@ class ShareSingle extends React.Component {
       'block user',
       'dismiss'
     ]
+    
+    const optionsAlt = [
+      'remove post',
+      'dismiss'
+    ]
+
+    const onComplete = index => { this.userHasChosenOption({index:index}) }
+
+    let optionsChoice = options
+    let indexChoice = 3
+    let onCompleteChoice = onComplete
+
+    if(Actions.user) {
+      if(Actions.user.email === this.state.item.userEmail) {
+        optionsChoice = optionsAlt
+        indexChoice = 1
+        onCompleteChoice = index => { this.userHasChosenOptionAsAuthor({index:index}) }
+      }
+    }
 
     Actions.ActionSheet({
-      onComplete: index => { this.userHasChosenOption({index:index}) },
-      buttons: options,
+      onComplete: index => { onCompleteChoice(index) },
+      buttons: optionsChoice,
       title: 'post options',
-      cancelIndex: 3
+      cancelIndex: indexChoice
     })
+
+  }
+
+  userHasChosenOptionAsAuthor(props) {
+
+    const index = parseInt(props.index)
+    const item = this.state.item
+
+    switch(index) {
+
+      case 0: 
+        const removePostData = { 
+          key: item.postKey,
+          title: item.title,
+          onComplete: () => { Actions.popRefresh() }
+        }
+        removePostAction(removePostData)
+        break;
+
+      default:
+        break;
+    }
 
   }
 
@@ -132,24 +173,11 @@ class ShareSingle extends React.Component {
     const index = parseInt(props.index)
     const item = this.state.item
 
-    // date: 1484030471969
-    // descDate: -1484030471969
-    // description: "Ha"
-    // postKey: "-Ka65zC6xOpxX0K86L6I"
-    // title: "Ha"
-    // userDisplayName: "bro@bro.com"
-    // userEmail: "bro@bro.com"
-    // userPhoto: "https://i.imgur.com/sfraq6D.jpg"
-
-    if(item.userEmail === Actions.user.email) {
-      Actions.modal({
-        header: 'Woah!',
-        message: `This is your share wall post, ${firebase.auth().currentUser.displayName}`
-      })
+    if(!Actions.user && index !== 3) {
+      notLoggedIn()
     }
 
     else {
-
       switch(index) {
 
         case 0: 
@@ -157,7 +185,7 @@ class ShareSingle extends React.Component {
             userEmail: Actions.user.email,
             key: item.postKey,
             title: item.title,
-            onComplete: () => {}
+            onComplete: () => { checkBadgesAction({ userEmail: Actions.user.email }) }
           }
           reportPostAction(reportPostData)
           break;

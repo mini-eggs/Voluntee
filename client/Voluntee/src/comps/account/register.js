@@ -128,9 +128,10 @@ class RegisterComp extends React.Component {
 					})
 			})
 			.catch( err => {
-				if(!err) err = 'Required parameters are not valid'
-					this.setState({loadingRegisteration:false})
-					this.error(err)
+				if(!err) {
+          err = 'Required parameters are not valid'
+        }
+				this.error(err)
 			})
 		})
 	}
@@ -139,11 +140,10 @@ class RegisterComp extends React.Component {
 
 	error(msg){
 		this.setState({loadingRegisteration:false}, () => {
-			Actions.changeModal({
+			Actions.modal({
 				header:'Error',
 				message:msg
 			})
-			Actions.showModal()
 		})
 	}
 

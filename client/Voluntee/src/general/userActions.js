@@ -1,7 +1,7 @@
 import {Actions} from 'react-native-router-flux'
 
 import {saveLoginStateToLocalStorage} from './localStorage'
-import {login,register,blockUser, removeCommentByKey, hidePostByUserEmailAndKey, reportPostByKeyAndUserEmail, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage, hideConvoByKeyAndUserEmail, reportUserByUserEmailAndProps} from './firebase'
+import {login,register,blockUser, removeCommentByKey, hidePostByUserEmailAndKey, reportPostByKeyAndUserEmail, hideCommentByKeyAndUserEmail, reportCommentByKey, createMessage, hideConvoByKeyAndUserEmail, reportUserByUserEmailAndProps, removePostByKey} from './firebase'
 import {checkBadges, awardBadgeByUserEmailAndBadgeKey} from './badges'
 
 // internal
@@ -294,13 +294,23 @@ export {createMessageAction}
 
 const reportCommentAction = async props => {
 	return new Promise( async (resolve, reject) => {
+
+    const onComplete = props.onComplete
+    const data = props
+    delete data.onComplete
+
     try {
       const doubleCheckStatus = await doubleCheck({message:'Are you sure you want to report this comment?'})
-      const reportCommentStatus = await reportCommentByKey(props)
+      const reportCommentStatus = await reportCommentByKey(data)
       Actions.modal({
-        header: 'Error',
+        header: 'Complete',
         message: 'Comment has been reported',
-        onComplete: () => { resolve() }
+        onComplete: () => { 
+          if(onComplete) {
+            onComplete()
+          }
+          resolve()
+        }
       })
     }
     catch(err) {
@@ -383,6 +393,40 @@ const removeCommentByKeyAction = async props => {
 	})
 }
 export {removeCommentByKeyAction}
+
+const removePostAction = props => {
+  // @props
+  // key
+  // title
+  // onComplete
+  // @
+  return new Promise( async (resolve, reject) => {
+    const onComplete = props.onComplete
+    const data = props
+    delete data.onComplete
+    try {
+      const doubleCheckStatus = await doubleCheck({message: `Are you sure you want to remove ${props.title}?`})
+      const status = await removePostByKey({ key: data.key })
+      Actions.modal({
+        header: 'Complete',
+        message: `${props.title} has been removed`,
+        onComplete: () => {
+          if(onComplete) {
+            onComplete()
+          }
+          resolve()
+        }
+      })
+    }
+    catch(err) {
+      if(__DEV__) {
+        console.log(err)
+      }
+      reject(err)
+    }
+  })
+}
+export {removePostAction}
 
 const blockUserAction = async props => {
 	return new Promise( async (resolve, reject) => {
