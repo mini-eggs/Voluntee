@@ -1,5 +1,5 @@
 import React from 'react'
-import {View,Modal,Text,TouchableHighlight,Dimensions,Image} from 'react-native'
+import {View,Modal,Text,TouchableHighlight,Dimensions,Image, Platform} from 'react-native'
 import {Actions} from 'react-native-router-flux'
 
 import {Button} from '../button/button'
@@ -40,6 +40,10 @@ const style = {
     backgroundColor:'#fff',
     minHeight: screenHeight - statusbarHeight,
     marginTop: statusbarHeight
+  },
+  offset: {
+    height: 0,
+    marginTop: (Platform.OS === 'ios') ? 0 : 25
   }
 }
 
@@ -60,6 +64,7 @@ const BadgeComp = props => {
             text="DISMISS" 
             onPress={ e => { props.onPress() } } 
           />
+          <View style={style.offset} />
         </View>
       </View>
     </View>
