@@ -1,15 +1,10 @@
 import React from 'react'
 import {View,TouchableOpacity,Text,Image} from 'react-native'
 import Tabbar from 'react-native-tabbar'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import {lightGreen, actionBarHeight, tabbarOffset} from '../../general/general'
 import {Actions} from 'react-native-router-flux'
-
-import VisibilityIcon from '../../assets/img/visibility.png'
-import LoyaltyIcon from '../../assets/img/loyalty.png'
-import PagesIcon from '../../assets/img/pages.png'
-import ForumIcon from '../../assets/img/forum.png'
-import SettingsIcon from '../../assets/img/settings.png'
 
 const style = {
 	tabbies:{
@@ -28,34 +23,29 @@ const style = {
   		zIndex:1
   	},
   	icon:{
-  		// height:27,
-  		// marginBottom:-2,
-  		// zIndex:9
+      color: '#fff',
   		height:35
   	}
 }
 
-// const GetIconTab = props => <TouchableOpacity style={style.tabItem} onPress={ event => { props.complete() }}>
-// 	<View>
-// 		<Image resizeMode={'contain'} style={style.icon} source={props.icon} />
-// 		<Text style={style.text}>
-// 			{props.text}
-// 		</Text>
-// 	</View>
-// </TouchableOpacity>
-
-const GetIconTab = props => <TouchableOpacity style={style.tabItem} onPress={ event => { props.complete() }}>
-	<View>
-		<Image resizeMode={'contain'} style={style.icon} source={props.icon} />
-	</View>
-</TouchableOpacity>
+const GetIconTab = props => {
+  return (
+    <TouchableOpacity style={style.tabItem} onPress={ event => { props.complete() }}>
+      <MaterialIcons 
+        name={props.icon}
+        size={35}
+        color={style.icon.color}
+      />
+    </TouchableOpacity>
+  )
+}
 
 const tabs = [
-	{text:'discover', icon: VisibilityIcon, complete: event => { Actions.Discover()} },
-	{text:'saved', icon: LoyaltyIcon, complete: event => { Actions.Saved()} },
-	{text:'badges', icon: PagesIcon, complete: event => { Actions.Badges()} },
-	{text:'share', icon: ForumIcon, complete: event => { Actions.Share()} },
-	{text:'account', icon: SettingsIcon, complete: event => { Actions.Account()} }
+	{text:'discover', icon: 'visibility', complete: event => { Actions.Discover()} },
+	{text:'saved', icon: 'loyalty', complete: event => { Actions.Saved()} },
+	{text:'badges', icon: 'pages', complete: event => { Actions.Badges()} },
+	{text:'share', icon: 'forum', complete: event => { Actions.Share()} },
+	{text:'account', icon: 'settings', complete: event => { Actions.Account()} }
 ]
 
 const tabbies = props => {
@@ -63,7 +53,7 @@ const tabbies = props => {
 		<Tabbar show={true} style={style.tabbies} >
 			<View style={{flex:1,flexDirection:'row'}}>
 				{tabs.map( (tab,index) => <GetIconTab key={index} {...tab} /> )}
-		    </View>
+		  </View>
 		</Tabbar>
 	)
 }

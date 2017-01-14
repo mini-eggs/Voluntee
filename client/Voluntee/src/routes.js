@@ -1,6 +1,7 @@
 import React from 'react'
 import {Image} from 'react-native'
 import {Scene,Router,Actions} from 'react-native-router-flux'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import AccountComp from './comps/account/account'
 import BagdeComp from './comps/badges/badges'

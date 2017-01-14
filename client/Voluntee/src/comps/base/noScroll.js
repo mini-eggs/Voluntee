@@ -1,6 +1,5 @@
 import React from 'react'
 import {View,ScrollView} from 'react-native'
-import TabBar from '../tabbar/tabbar'
 import ModalComp from '../modal/modal'
 import BadgeModalComp from '../badgeModal/badgeModal'
 import {actionBarHeight,tabBarHeight,lightGreen,screenArea,screenHeight} from '../../general/general'
