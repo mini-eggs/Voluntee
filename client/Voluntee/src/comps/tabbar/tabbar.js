@@ -41,11 +41,11 @@ const GetIconTab = props => {
 }
 
 const tabs = [
-	{text:'discover', icon: 'visibility', complete: event => { Actions.Discover()} },
-	{text:'saved', icon: 'loyalty', complete: event => { Actions.Saved()} },
-	{text:'badges', icon: 'pages', complete: event => { Actions.Badges()} },
-	{text:'share', icon: 'forum', complete: event => { Actions.Share()} },
-	{text:'account', icon: 'settings', complete: event => { Actions.Account()} }
+  {text:'badges', icon: 'pages', complete: event => { Actions.Badges()} },
+  {text:'saved', icon: 'loyalty', complete: event => { Actions.Saved()} },
+  {text:'discover', icon: 'visibility', complete: event => { Actions.Discover()} },
+  {text:'share', icon: 'forum', complete: event => { Actions.Share()} },
+  {text:'account', icon: 'settings', complete: event => { Actions.Account()} }
 ]
 
 const tabbies = props => {

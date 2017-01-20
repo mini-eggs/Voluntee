@@ -54,12 +54,13 @@ class CreateForm extends React.Component {
 			title:null,
 			description:null,
 			parent:props.parent,
-			loading:false
+			loading:false,
+      autoFocus: true
 		}
 	}
 
 	submitShare(){
-		this.setState({loading:true}, () => {
+		this.setState({loading:true, autoFocus: false}, () => {
 			new Promise((resolve,reject) => {
 				if(this.state.title && this.state.description){
 					if(this.state.title.length > 0 && this.state.description.length > 0){
@@ -125,7 +126,7 @@ class CreateForm extends React.Component {
 						   	ref="title"
 						   	autoCapitalize="words"
 						   	autoCorrect={true}
-						   	autoFocus={Actions.user != null}
+						   	autoFocus={Actions.user != null && this.state.autoFocus}
 						   	maxLength={50}
 						   	onSubmitEditing={ () => { this.refs.description.focus() }}
 						   	returnKeyType="next"
